@@ -19,9 +19,10 @@
     margin: 18px 0 14px;
     transform: none;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "label label"
+      "title title"
       "input button"
       "hint hint";
     gap: 8px 10px;
@@ -43,11 +44,22 @@
   }
 
   .composer::after {
-    content: "Ctrl / Cmd + Enterで記録。Enterは改行。例：昼：そば 850円 ／ チョコザップ行った ／ ゼルダ：空Nを振りすぎない";
+    content: "Ctrl / Cmd + Enterで記録。Enterは改行。複数行でも1つのログとして保存。";
     grid-area: hint;
     color: var(--faint);
     font-size: 12px;
     line-height: 1.6;
+  }
+
+  #composer-title {
+    grid-area: title;
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    padding: 4px 1px 8px;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 16px;
   }
 
   .composer textarea {
@@ -62,7 +74,8 @@
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, .03);
   }
 
-  .composer textarea::placeholder {
+  .composer textarea::placeholder,
+  #composer-title::placeholder {
     color: color-mix(in srgb, var(--faint), transparent 18%);
   }
 
@@ -87,4 +100,32 @@
   .empty {
     padding: 34px 14px;
   }
+}
+
+.runtime-entry-title {
+  display: block;
+  margin: 0 0 3px;
+  color: var(--ink);
+  font-family: 'Shippori Mincho', serif;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.runtime-title-field {
+  display: grid;
+  gap: 5px;
+  color: var(--faint);
+  font-size: 12px;
+}
+
+.runtime-title-field input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--paper);
+  padding: 9px 10px;
+  color: var(--ink);
+  font-size: 15px;
+  font-family: 'Shippori Mincho', serif;
 }
