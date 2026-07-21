@@ -1,0 +1,127 @@
+.card.is-inline-editing {
+  border-color: color-mix(in srgb, var(--seal), var(--line) 45%);
+  background: var(--card);
+  padding: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+}
+
+.inline-log-editor {
+  display: grid;
+  gap: 11px;
+  padding: 14px;
+}
+
+.inline-log-editor-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.inline-log-editor-heading strong {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.inline-log-editor-heading span {
+  color: var(--faint);
+  font-size: 11px;
+}
+
+.inline-log-field {
+  display: grid;
+  gap: 5px;
+  color: var(--faint);
+  font-size: 11px;
+}
+
+.inline-log-title,
+.inline-log-content {
+  width: 100%;
+  color: var(--ink);
+}
+
+.inline-log-title {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  padding: 4px 1px 8px;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 16px;
+}
+
+.inline-log-content {
+  min-height: 116px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  padding: 11px 12px;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.inline-log-title::placeholder,
+.inline-log-content::placeholder {
+  color: color-mix(in srgb, var(--faint), transparent 18%);
+}
+
+.inline-log-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inline-log-status {
+  color: var(--faint);
+  font-size: 11px;
+}
+
+.inline-log-buttons {
+  display: flex;
+  gap: 7px;
+}
+
+.inline-log-buttons button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.inline-log-cancel {
+  background: transparent;
+  color: var(--faint);
+}
+
+.inline-log-save {
+  border-color: var(--seal) !important;
+  background: var(--seal);
+  color: white;
+  font-weight: 700;
+}
+
+.inline-log-buttons button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+@media (max-width: 560px) {
+  .inline-log-editor-heading,
+  .inline-log-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inline-log-buttons {
+    width: 100%;
+  }
+
+  .inline-log-buttons button {
+    flex: 1;
+  }
+}
