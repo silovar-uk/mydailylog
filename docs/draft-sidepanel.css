@@ -193,13 +193,8 @@
     --workspace-main-width: 620px;
     --workspace-memo-width: 300px;
     --workspace-gap: 18px;
-    --workspace-total-width: calc(
-      var(--workspace-nav-width) +
-      var(--workspace-gap) +
-      var(--workspace-main-width) +
-      var(--workspace-gap) +
-      var(--workspace-memo-width)
-    );
+    --workspace-half-width: 543px;
+    --workspace-start: calc(50vw - var(--workspace-half-width));
   }
 
   body.side-memo-open .shell {
@@ -207,20 +202,20 @@
     max-width: none;
     margin-right: 0;
     margin-left: calc(
-      (100vw - var(--workspace-total-width)) / 2 +
+      var(--workspace-start) +
       var(--workspace-nav-width) +
       var(--workspace-gap)
     );
   }
 
   body.side-memo-open .nav {
-    left: calc((100vw - var(--workspace-total-width)) / 2);
+    left: var(--workspace-start);
   }
 
   body.side-memo-open .side-memo-panel {
     right: auto;
     left: calc(
-      (100vw - var(--workspace-total-width)) / 2 +
+      var(--workspace-start) +
       var(--workspace-nav-width) +
       var(--workspace-gap) +
       var(--workspace-main-width) +
@@ -245,6 +240,7 @@
     --workspace-main-width: 720px;
     --workspace-memo-width: 330px;
     --workspace-gap: 20px;
+    --workspace-half-width: 610px;
   }
 }
 
