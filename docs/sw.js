@@ -1,5 +1,5 @@
-const CACHE_NAME = 'mydailylog-v5';
-const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './desktop-input.css', './runtime-log-title.js'];
+const CACHE_NAME = 'mydailylog-v6';
+const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './desktop-input.css', './runtime-log-title.js', './draft-sidepanel.css', './draft-sidepanel.js'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
