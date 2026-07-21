@@ -182,6 +182,19 @@
     }, 0);
   }
 
+  const editorObserver = new MutationObserver(() => {
+    if (activeEditorId && !document.querySelector('.inline-log-editor')) {
+      activeEditorId = null;
+      saving = false;
+    }
+  });
+  editorObserver.observe(document.documentElement, { childList: true, subtree: true });
+
+  window.addEventListener('hashchange', () => {
+    activeEditorId = null;
+    saving = false;
+  });
+
   document.addEventListener('click', (event) => {
     const opener = event.target?.closest?.('[data-open]');
     if (!opener) return;
