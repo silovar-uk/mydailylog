@@ -339,13 +339,13 @@
   function reorderPinnedCards() {
     document.querySelectorAll('.entries').forEach((container) => {
       const cards = [...container.children].filter((node) => node.classList?.contains('card'));
-      cards
-        .sort((left, right) => {
-          const pinDifference = Number(right.classList.contains('is-pinned')) - Number(left.classList.contains('is-pinned'));
-          if (pinDifference) return pinDifference;
-          return Number(left.dataset.originalOrder || 0) - Number(right.dataset.originalOrder || 0);
-        })
-        .forEach((card) => container.append(card));
+      const sorted = [...cards].sort((left, right) => {
+        const pinDifference = Number(right.classList.contains('is-pinned')) - Number(left.classList.contains('is-pinned'));
+        if (pinDifference) return pinDifference;
+        return Number(left.dataset.originalOrder || 0) - Number(right.dataset.originalOrder || 0);
+      });
+      const changed = sorted.some((card, index) => cards[index] !== card);
+      if (changed) sorted.forEach((card) => container.append(card));
     });
   }
 
@@ -381,6 +381,14 @@
 
     const cards = [...document.querySelectorAll('.card')];
     if (!cards.length) return;
+    const pendingCards = cards.filter((card) => {
+      const existingFooter = card.querySelector('.log-card-footer');
+      return card.dataset[DECORATED] !== '1' || !existingFooter;
+    });
+    if (!pendingCards.length) {
+      reorderPinnedCards();
+      return;
+    }
 
     let entries;
     try {
@@ -391,12 +399,10 @@
     }
     const byId = new Map(entries.map((entry) => [entry.id, entry]));
 
-    cards.forEach((card, index) => {
+    pendingCards.forEach((card) => {
       const id = card.querySelector('.entry-open[data-open]')?.dataset.open;
       if (!id) return;
-      const existingFooter = card.querySelector('.log-card-footer');
-      if (card.dataset[DECORATED] === '1' && existingFooter) return;
-      decorateCard(card, byId.get(id), entries, index);
+      decorateCard(card, byId.get(id), entries, cards.indexOf(card));
     });
 
     reorderPinnedCards();
