@@ -1,0 +1,19 @@
+/* PC-only shortcut hint shown while the temporary memo is folded. */
+@media (min-width: 800px) {
+  .side-memo-toggle[aria-expanded="false"] {
+    min-width: 54px;
+    min-height: 102px;
+  }
+
+  .side-memo-toggle[aria-expanded="false"]::after {
+    content: "Alt + ←\A開く";
+    display: block;
+    white-space: pre;
+    color: color-mix(in srgb, var(--faint), transparent 30%);
+    font: 500 8px/1.35 'IBM Plex Mono', monospace;
+    letter-spacing: 0;
+    text-align: center;
+    writing-mode: horizontal-tb;
+    pointer-events: none;
+  }
+}
