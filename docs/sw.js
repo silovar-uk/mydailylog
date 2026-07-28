@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mydailylog-v13';
+const CACHE_NAME = 'mydailylog-v14';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const APP_SHELL = [
   './runtime-log-title.js',
   './mobile-composer-flow.js',
   './draft-sidepanel.css',
+  './memo-collapsed-hint.css',
   './draft-sidepanel.js',
   './inline-log-edit.css',
   './inline-log-edit.js',
