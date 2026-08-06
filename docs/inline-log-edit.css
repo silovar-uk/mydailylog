@@ -21,9 +21,11 @@
 }
 
 .inline-log-editor-heading strong {
-  font-family: 'Shippori Mincho', serif;
-  font-size: 17px;
-  font-weight: 500;
+  color: color-mix(in srgb, var(--faint), transparent 45%);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .02em;
 }
 
 .inline-log-editor-heading span {
