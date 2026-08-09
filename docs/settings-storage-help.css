@@ -70,3 +70,21 @@
   color: var(--ink);
   font-weight: 700;
 }
+
+.storage-clear-note {
+  margin: 10px 0 4px !important;
+  color: var(--faint);
+  font-size: 12px !important;
+  line-height: 1.65;
+}
+
+.panel #clear-device-storage {
+  border-color: color-mix(in srgb, var(--seal), var(--line) 58%);
+  color: var(--seal);
+}
+
+.panel #clear-device-storage:hover,
+.panel #clear-device-storage:focus-visible {
+  background: color-mix(in srgb, var(--seal), transparent 94%);
+  border-color: color-mix(in srgb, var(--seal), var(--line) 35%);
+}
