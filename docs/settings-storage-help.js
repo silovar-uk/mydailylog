@@ -18,6 +18,8 @@
     const storagePanel = findPanel(settings, 'データの安心') || findPanel(settings, 'データ保存');
     if (!storagePanel) return;
 
+    storagePanel.querySelector('#request-storage')?.remove();
+
     const heading = storagePanel.querySelector('h2');
     if (heading) heading.textContent = 'データ保存';
 
@@ -41,8 +43,7 @@
     help.innerHTML = `
       <p><strong>メモはクラウドには保存されません。</strong> この端末の、このブラウザ内に保存されます。</p>
       <p>保存先はブラウザのサイトデータ（IndexedDB）です。ログインや端末間の自動同期はありません。</p>
-      <p>ブラウザのサイトデータを削除したり、端末やブラウザを変えたりすると、メモを引き継げない場合があります。残しておきたいメモは「JSONをバックアップ」で保存してください。</p>
-      <p>「この端末で保存を保護」は、ブラウザにデータを消去されにくくするよう依頼する機能です。クラウド保存に切り替えるものではありません。</p>`;
+      <p>ブラウザのサイトデータを削除したり、端末やブラウザを変えたりすると、メモを引き継げない場合があります。残しておきたいメモは「JSONをバックアップ」で保存してください。</p>`;
 
     if (heading) row.append(heading);
     row.append(helpButton);
