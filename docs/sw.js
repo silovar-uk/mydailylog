@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mydailylog-v27';
+const CACHE_NAME = 'mydailylog-v28';
 const APP_SHELL = [
   './',
   './index.html',
@@ -18,6 +18,8 @@ const APP_SHELL = [
   './log-card-ux.js',
   './day-copy.css',
   './day-copy.js',
+  './day-tidy.css',
+  './day-tidy.js',
   './ui-language-meter.css',
   './ui-language-meter.js',
   './day-title-format.js',
