@@ -147,10 +147,14 @@
 
       .nav.nav-without-review button {
         min-height: 42px;
+        margin: 2px 3px;
         align-items: center;
         padding: 3px 2px 4px;
+        border-radius: 8px;
+        background: transparent;
         color: color-mix(in srgb, var(--faint), transparent 14%);
         font-weight: 400;
+        transition: background .14s ease, color .14s ease, box-shadow .14s ease, transform .08s ease;
       }
 
       .nav.nav-without-review .nav-item-inner {
@@ -168,8 +172,8 @@
         height: 15px;
         flex: 0 0 15px;
         font-size: 12.5px;
-        opacity: .66;
-        filter: saturate(.58);
+        opacity: .62;
+        filter: saturate(.56);
       }
 
       .nav.nav-without-review .nav-label-slot {
@@ -192,12 +196,16 @@
       }
 
       .nav.nav-without-review button.active {
-        color: color-mix(in srgb, var(--ink), var(--faint) 24%);
+        background: color-mix(in srgb, var(--line), var(--soft) 58%);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line), var(--faint) 14%);
+        color: color-mix(in srgb, var(--ink), var(--faint) 18%);
         font-weight: 600;
+        transform: translateY(1px);
       }
 
       .nav.nav-without-review button.active .nav-emoji {
-        opacity: .76;
+        opacity: .88;
+        filter: saturate(.72);
       }
     }
   `;
