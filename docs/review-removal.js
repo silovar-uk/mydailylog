@@ -31,11 +31,15 @@
         emojiSpan.setAttribute('aria-hidden', 'true');
         emojiSpan.textContent = emoji;
 
+        const labelSlot = document.createElement('span');
+        labelSlot.className = 'nav-label-slot';
+
         const labelSpan = document.createElement('span');
         labelSpan.className = 'nav-label';
         labelSpan.textContent = label;
 
-        inner.append(emojiSpan, labelSpan);
+        labelSlot.append(labelSpan);
+        inner.append(emojiSpan, labelSlot);
         button.replaceChildren(inner);
         button.dataset.navLabelKey = expectedKey;
       }
@@ -85,39 +89,54 @@
     .nav.nav-without-review button {
       display: flex;
       min-width: 0;
-      min-height: 58px;
+      min-height: 78px;
       align-items: flex-end;
       justify-content: center;
-      padding: 5px 3px 8px;
+      padding: 5px 3px 7px;
       line-height: 1;
     }
 
     .nav.nav-without-review .nav-item-inner {
-      display: flex;
-      min-width: 0;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
+      display: grid;
+      grid-template-rows: 18px 46px;
+      justify-items: center;
+      align-items: end;
       gap: 3px;
+      min-width: 24px;
+      height: 67px;
       line-height: 1;
-      white-space: nowrap;
     }
 
     .nav.nav-without-review .nav-emoji {
       display: flex;
       width: 20px;
       height: 18px;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
       font-size: 15px;
       line-height: 1;
     }
 
+    .nav.nav-without-review .nav-label-slot {
+      display: grid;
+      width: 18px;
+      height: 46px;
+      align-items: end;
+      justify-items: center;
+    }
+
     .nav.nav-without-review .nav-label {
       display: block;
+      width: 1em;
+      height: 44px;
+      color: inherit;
       font-size: 11px;
-      line-height: 13px;
-      letter-spacing: 0;
+      line-height: 1;
+      letter-spacing: .08em;
+      text-align: end;
+      white-space: nowrap;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
     }
   `;
   document.head.append(style);
