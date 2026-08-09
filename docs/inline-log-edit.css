@@ -5,6 +5,24 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
 }
 
+/* Editing mode: keep the selected memo in focus and reclaim the writing area. */
+#view:has(.inline-log-editor) .composer {
+  display: none !important;
+}
+
+.entries:has(.inline-log-editor) {
+  margin-top: 6px;
+}
+
+.entries:has(.inline-log-editor) .card:not(.is-inline-editing) {
+  display: none !important;
+}
+
+.entries:has(.inline-log-editor) .card.is-inline-editing {
+  width: 100%;
+  margin: 0;
+}
+
 .inline-log-editor {
   display: grid;
   gap: 11px;
@@ -23,18 +41,18 @@
   background: transparent;
   padding: 2px 1px 8px;
   font-family: 'Shippori Mincho', serif;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .inline-log-content {
-  min-height: 116px;
+  min-height: clamp(320px, 56dvh, 720px);
   resize: vertical;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--paper);
-  padding: 11px 12px;
-  font-size: 15px;
-  line-height: 1.75;
+  padding: 14px 15px;
+  font-size: 16px;
+  line-height: 1.8;
 }
 
 .inline-log-title::placeholder,
@@ -91,6 +109,15 @@
 }
 
 @media (max-width: 560px) {
+  .inline-log-editor {
+    padding: 10px;
+  }
+
+  .inline-log-content {
+    min-height: clamp(280px, 50dvh, 560px);
+    padding: 12px;
+  }
+
   .inline-log-actions {
     align-items: flex-start;
     flex-direction: column;
