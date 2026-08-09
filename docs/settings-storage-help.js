@@ -92,6 +92,26 @@
     });
   }
 
+  function syncActionLabels(settings) {
+    const labels = new Map([
+      ['#sample-data', 'サンプルデータを入れてみる'],
+      ['#export-json', 'JSONで出力'],
+      ['#export-csv', 'CSVで出力'],
+    ]);
+
+    labels.forEach((text, selector) => {
+      const button = settings.querySelector(selector);
+      if (button && button.textContent !== text) button.textContent = text;
+    });
+
+    const importInput = settings.querySelector('#import-json');
+    const importLabel = importInput?.closest('label');
+    if (importLabel) {
+      const textNode = [...importLabel.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
+      if (textNode && textNode.textContent.trim() !== 'JSONを取り込む') textNode.textContent = 'JSONを取り込む';
+    }
+  }
+
   function syncClearButton(settings) {
     const dataPanel = findPanel(settings, 'データ管理');
     if (!dataPanel) return;
@@ -133,11 +153,13 @@
     const aiPanel = findPanel(settings, 'AI');
     if (aiPanel) aiPanel.remove();
 
+    syncActionLabels(settings);
+    syncClearButton(settings);
+
     const storagePanel = findPanel(settings, 'データの安心') || findPanel(settings, 'データ保存');
     if (!storagePanel) return;
 
     syncStorageSummary(storagePanel);
-    syncClearButton(settings);
 
     const heading = storagePanel.querySelector('h2');
     if (heading) heading.textContent = 'データ保存';
@@ -162,7 +184,7 @@
     help.innerHTML = `
       <p><strong>メモはクラウドには保存されません。</strong> この端末の、このブラウザ内に保存されます。</p>
       <p>保存先はブラウザのサイトデータ（IndexedDB）です。ログインや端末間の自動同期はありません。</p>
-      <p>ブラウザのサイトデータを削除したり、端末やブラウザを変えたりすると、メモを引き継げない場合があります。残しておきたいメモは「JSONをバックアップ」で保存してください。</p>`;
+      <p>ブラウザのサイトデータを削除したり、端末やブラウザを変えたりすると、メモを引き継げない場合があります。残しておきたいメモは「JSONで出力」で保存してください。</p>`;
 
     if (heading) row.append(heading);
     row.append(helpButton);
