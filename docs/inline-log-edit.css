@@ -11,35 +11,6 @@
   padding: 14px;
 }
 
-.inline-log-editor-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--line);
-}
-
-.inline-log-editor-heading strong {
-  color: color-mix(in srgb, var(--faint), transparent 45%);
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: .02em;
-}
-
-.inline-log-editor-heading span {
-  color: var(--faint);
-  font-size: 11px;
-}
-
-.inline-log-field {
-  display: grid;
-  gap: 5px;
-  color: var(--faint);
-  font-size: 11px;
-}
-
 .inline-log-title,
 .inline-log-content {
   width: 100%;
@@ -50,7 +21,7 @@
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
-  padding: 4px 1px 8px;
+  padding: 2px 1px 8px;
   font-family: 'Shippori Mincho', serif;
   font-size: 16px;
 }
@@ -120,7 +91,6 @@
 }
 
 @media (max-width: 560px) {
-  .inline-log-editor-heading,
   .inline-log-actions {
     align-items: flex-start;
     flex-direction: column;
