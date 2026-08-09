@@ -36,6 +36,15 @@
     });
   }
 
+  function clearOwnedWebStorage(storage) {
+    const keys = [];
+    for (let index = 0; index < storage.length; index += 1) {
+      const key = storage.key(index);
+      if (key?.startsWith('mydailylog-')) keys.push(key);
+    }
+    keys.forEach((key) => storage.removeItem(key));
+  }
+
   async function clearDeviceStorage() {
     const firstCheck = window.confirm(
       'このブラウザに保存されているメモ、日付タイトル、設定、作業メモ、入力途中の下書きをすべて削除します。\n\nJSONバックアップとして保存済みのファイルは削除されません。\n\n続けますか？'
@@ -43,15 +52,22 @@
     if (!firstCheck) return;
 
     const finalCheck = window.confirm(
-      '最終確認です。\n\nこのブラウザ内のデータは元に戻せません。\n「端末ストレージをすべて削除」を実行しますか？'
+      '最終確認です。\n\nこのブラウザ内のMyDailyLogデータは元に戻せません。\n「端末ストレージをすべて削除」を実行しますか？'
     );
     if (!finalCheck) return;
 
     try {
       await clearIndexedDbData();
-      localStorage.clear();
-      sessionStorage.clear();
-      window.alert('このブラウザに保存されていたデータを削除しました。');
+
+      /* Remove live autosave fields before reload so pagehide handlers cannot
+         write the just-deleted draft or side memo back into localStorage. */
+      document.querySelector('.composer')?.remove();
+      document.querySelector('#side-memo-panel')?.remove();
+
+      clearOwnedWebStorage(localStorage);
+      clearOwnedWebStorage(sessionStorage);
+
+      window.alert('このブラウザに保存されていたMyDailyLogのデータを削除しました。');
       location.reload();
     } catch (error) {
       console.error(error);
