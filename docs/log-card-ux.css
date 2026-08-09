@@ -48,11 +48,17 @@
 
 .log-card-timestamps {
   display: flex;
+  flex: 1 1 auto;
   flex-wrap: wrap;
-  gap: 4px 9px;
+  align-items: baseline;
+  gap: 3px 10px;
   min-width: 0;
   color: color-mix(in srgb, var(--faint), transparent 14%);
   font: 10px/1.45 IBM Plex Mono, monospace;
+}
+
+.memo-char-count {
+  color: color-mix(in srgb, var(--faint), transparent 28%);
 }
 
 .log-card-actions {
@@ -62,8 +68,7 @@
   gap: 2px;
 }
 
-.log-card-action,
-.log-card-related-toggle {
+.log-card-action {
   min-width: 30px;
   min-height: 30px;
   border-radius: 7px;
@@ -72,9 +77,7 @@
 }
 
 .log-card-action:hover,
-.log-card-related-toggle:hover,
-.log-card-action[aria-pressed="true"],
-.log-card-related-toggle[aria-expanded="true"] {
+.log-card-action[aria-pressed="true"] {
   background: var(--soft);
   color: var(--seal);
 }
@@ -92,142 +95,10 @@
   transform: rotate(-18deg);
 }
 
+.related-log-panel,
+.related-log-preview-backdrop,
 .log-card-related-toggle {
-  width: auto;
-  padding: 0 7px;
-  font-size: 11px;
-  white-space: nowrap;
-}
-
-.related-log-panel {
-  display: grid;
-  gap: 5px;
-  margin: 0 11px 10px;
-  padding: 9px;
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--soft), transparent 24%);
-}
-
-.related-log-panel[hidden] {
-  display: none;
-}
-
-.related-log-panel > p {
-  margin: 0 0 2px;
-  color: var(--faint);
-  font-size: 10px;
-}
-
-.related-log-link {
-  display: grid;
-  grid-template-columns: minmax(94px, auto) minmax(0, 1fr);
-  align-items: baseline;
-  gap: 8px;
-  min-height: 34px;
-  padding: 5px 7px;
-  border-radius: 6px;
-  text-align: left;
-}
-
-.related-log-link:hover {
-  background: var(--card);
-}
-
-.related-log-date {
-  color: var(--faint);
-  font: 10px/1.4 IBM Plex Mono, monospace;
-  white-space: nowrap;
-}
-
-.related-log-link strong {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 500;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card.is-related-highlight {
-  animation: related-log-highlight 1.8s ease-out;
-}
-
-@keyframes related-log-highlight {
-  0%, 25% {
-    border-color: var(--seal);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--seal), transparent 82%);
-  }
-  100% {
-    border-color: var(--line);
-    box-shadow: var(--shadow);
-  }
-}
-
-.related-log-preview-backdrop {
-  position: fixed;
-  z-index: 70;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #1614106b;
-  padding: 14px;
-}
-
-.related-log-preview {
-  width: min(620px, 100%);
-  max-height: min(82vh, 760px);
-  overflow: auto;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--card);
-  padding: 17px;
-  box-shadow: 0 18px 58px #00000040;
-}
-
-.related-log-preview header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 11px;
-  border-bottom: 1px solid var(--line);
-}
-
-.related-log-preview header p {
-  margin: 0 0 2px;
-  color: var(--faint);
-  font-size: 11px;
-}
-
-.related-log-preview header h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.related-log-preview-close {
-  min-width: 38px;
-  color: var(--faint);
-  font-size: 24px;
-}
-
-.related-log-preview-date {
-  margin-top: 12px;
-  color: var(--faint);
-  font: 11px/1.5 IBM Plex Mono, monospace;
-}
-
-.related-log-preview-content {
-  margin: 11px 0 18px;
-  line-height: 1.8;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-
-.related-log-preview-timestamps {
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
+  display: none !important;
 }
 
 .side-memo-shortcut-hint {
@@ -246,23 +117,12 @@
 
 @media (max-width: 799px) {
   .log-card-footer {
-    align-items: flex-end;
+    align-items: center;
   }
 
   .log-card-timestamps {
-    display: grid;
-    gap: 1px;
-  }
-
-  .related-log-link {
-    grid-template-columns: 1fr;
-    gap: 1px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card.is-related-highlight {
-    animation: none;
-    border-color: var(--seal);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 8px;
   }
 }
