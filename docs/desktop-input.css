@@ -35,7 +35,7 @@
   }
 
   .composer::before {
-    content: "今日のログを書く";
+    content: "今日のメモを書く";
     grid-area: label;
     color: var(--ink);
     font-family: 'Shippori Mincho', serif;
@@ -44,7 +44,7 @@
   }
 
   .composer::after {
-    content: "Ctrl / Cmd + Enterで記録。Enterは改行。複数行でも1つのログとして保存。";
+    content: "Ctrl / Cmd + Enterで記録。Enterは改行。複数行でも1つのメモとして保存。";
     grid-area: hint;
     color: var(--faint);
     font-size: 12px;
@@ -104,12 +104,13 @@
 
 .runtime-entry-title {
   display: block;
-  margin: 0 0 3px;
-  color: var(--ink);
+  margin: 0 0 5px;
+  color: color-mix(in srgb, var(--seal) 66%, var(--ink) 34%);
   font-family: 'Shippori Mincho', serif;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.5;
   font-weight: 500;
+  letter-spacing: .015em;
 }
 
 .runtime-title-field {
