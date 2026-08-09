@@ -49,6 +49,16 @@
     return Number.isFinite(created) && Number.isFinite(updated) && updated - created > 2000;
   }
 
+  function countCharacters(value) {
+    const text = String(value || '').trim();
+    if (!text) return 0;
+    if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+      const segmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
+      return [...segmenter.segment(text)].length;
+    }
+    return Array.from(text).length;
+  }
+
   function makeButton(className, label, active, symbol) {
     const button = document.createElement('button');
     button.type = 'button';
@@ -73,6 +83,12 @@
       updated.textContent = `更新 ${formatDateTime(entry.updatedAt)}`;
       wrap.append(updated);
     }
+
+    const count = document.createElement('span');
+    count.className = 'memo-char-count';
+    count.textContent = `${countCharacters(entry.content)}字`;
+    count.setAttribute('aria-label', `本文 ${countCharacters(entry.content)}文字`);
+    wrap.append(count);
 
     return wrap;
   }
