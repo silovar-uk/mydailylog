@@ -43,15 +43,6 @@
     (activeRoute || fallbackRoute)?.click();
   }
 
-  function makeField(labelText, control) {
-    const label = document.createElement('label');
-    label.className = 'inline-log-field';
-    const labelNode = document.createElement('span');
-    labelNode.textContent = labelText;
-    label.append(labelNode, control);
-    return label;
-  }
-
   async function openInlineEditor(opener) {
     const id = opener?.dataset?.open;
     const card = opener?.closest?.('.card');
@@ -72,20 +63,18 @@
     form.dataset.inlineEditor = id;
     form.noValidate = true;
 
-    const heading = document.createElement('div');
-    heading.className = 'inline-log-editor-heading';
-    heading.innerHTML = '<strong>ログを整える</strong><span>カードの中で、そのまま編集</span>';
-
     const title = document.createElement('input');
     title.type = 'text';
     title.className = 'inline-log-title';
     title.autocomplete = 'off';
-    title.placeholder = '題名（任意）';
+    title.placeholder = '題名';
+    title.setAttribute('aria-label', '題名');
     title.value = entry.title || entry.metadata?.title || '';
 
     const content = document.createElement('textarea');
     content.className = 'inline-log-content';
-    content.placeholder = 'ログ本文';
+    content.placeholder = '本文';
+    content.setAttribute('aria-label', '本文');
     content.value = entry.content || '';
 
     const status = document.createElement('span');
@@ -110,13 +99,7 @@
     buttons.append(cancel, save);
     actions.append(status, buttons);
 
-    form.append(
-      heading,
-      makeField('題名', title),
-      makeField('本文', content),
-      actions,
-    );
-
+    form.append(title, content, actions);
     card.replaceChildren(form);
 
     const cancelEdit = () => {
