@@ -166,29 +166,26 @@
     }, 0);
   }
 
-  function bindOpener(opener) {
-    if (!opener?.dataset?.open || opener.dataset.inlineEditBound === '1') return;
-
-    // The base app assigns an onclick handler that opens its detail flow.
-    // Remove it and make the card itself consistently mean “edit this memo”.
-    opener.onclick = null;
-    opener.dataset.inlineEditBound = '1';
-    opener.setAttribute('aria-label', 'このメモを編集');
-
-    opener.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-      openInlineEditor(opener);
+  function markOpeners() {
+    document.querySelectorAll('.entry-open[data-open]').forEach((opener) => {
+      opener.setAttribute('aria-label', 'このメモを編集');
     });
   }
 
-  function bindOpeners() {
-    document.querySelectorAll('.entry-open[data-open]').forEach(bindOpener);
-  }
+  // Intercept before the base app's target-level onclick handler runs.
+  // This removes the timing race that previously sent some clicks into the old detail flow.
+  document.addEventListener('click', (event) => {
+    const opener = event.target?.closest?.('.entry-open[data-open]');
+    if (!opener) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    openInlineEditor(opener);
+  }, true);
 
   const observer = new MutationObserver(() => {
-    bindOpeners();
+    markOpeners();
     if (activeEditorId && !document.querySelector('.inline-log-editor')) {
       activeEditorId = null;
       saving = false;
@@ -199,20 +196,8 @@
   window.addEventListener('hashchange', () => {
     activeEditorId = null;
     saving = false;
-    queueMicrotask(bindOpeners);
+    queueMicrotask(markOpeners);
   });
 
-  // Capture is kept as a fallback for the tiny window before MutationObserver rebinding.
-  document.addEventListener('click', (event) => {
-    const opener = event.target?.closest?.('.entry-open[data-open]');
-    if (!opener || opener.dataset.inlineEditBound === '1') return;
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    opener.onclick = null;
-    bindOpener(opener);
-    openInlineEditor(opener);
-  }, true);
-
-  bindOpeners();
+  markOpeners();
 })();
