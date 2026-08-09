@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mydailylog-v15';
+const CACHE_NAME = 'mydailylog-v16';
 const APP_SHELL = [
   './',
   './index.html',
@@ -16,6 +16,10 @@ const APP_SHELL = [
   './memo-shortcuts.js',
   './log-card-ux.css',
   './log-card-ux.js',
+  './day-copy.css',
+  './day-copy.js',
+  './ui-language-meter.css',
+  './ui-language-meter.js',
 ];
 
 self.addEventListener('install', (event) => {
