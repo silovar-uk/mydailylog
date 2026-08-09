@@ -1,0 +1,60 @@
+.settings-update-history {
+  padding-top: 13px;
+  padding-bottom: 13px;
+}
+
+.settings-update-history h2 {
+  margin-bottom: 3px;
+}
+
+.update-history-intro {
+  margin: 0 0 12px !important;
+  color: var(--faint);
+  font-size: 11px !important;
+  line-height: 1.65;
+}
+
+.update-history-list {
+  display: grid;
+  gap: 13px;
+}
+
+.update-history-group + .update-history-group {
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--line), transparent 28%);
+}
+
+.update-history-date {
+  display: block;
+  margin-bottom: 5px;
+  color: color-mix(in srgb, var(--ink), var(--faint) 35%);
+  font: 600 10px/1.4 'IBM Plex Mono', monospace;
+}
+
+.update-history-group ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.update-history-group li {
+  color: color-mix(in srgb, var(--ink), var(--faint) 22%);
+  font-size: 11.5px;
+  line-height: 1.65;
+}
+
+@media (max-width: 799px) {
+  .settings-update-history {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .update-history-list {
+    gap: 11px;
+  }
+
+  .update-history-group li {
+    font-size: 11px;
+  }
+}
