@@ -140,6 +140,7 @@
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
+      event.stopPropagation();
       saveEdit();
     });
 
@@ -165,32 +166,53 @@
     }, 0);
   }
 
-  const editorObserver = new MutationObserver(() => {
+  function bindOpener(opener) {
+    if (!opener?.dataset?.open || opener.dataset.inlineEditBound === '1') return;
+
+    // The base app assigns an onclick handler that opens its detail flow.
+    // Remove it and make the card itself consistently mean “edit this memo”.
+    opener.onclick = null;
+    opener.dataset.inlineEditBound = '1';
+    opener.setAttribute('aria-label', 'このメモを編集');
+
+    opener.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      openInlineEditor(opener);
+    });
+  }
+
+  function bindOpeners() {
+    document.querySelectorAll('.entry-open[data-open]').forEach(bindOpener);
+  }
+
+  const observer = new MutationObserver(() => {
+    bindOpeners();
     if (activeEditorId && !document.querySelector('.inline-log-editor')) {
       activeEditorId = null;
       saving = false;
     }
   });
-  editorObserver.observe(document.documentElement, { childList: true, subtree: true });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
 
   window.addEventListener('hashchange', () => {
     activeEditorId = null;
     saving = false;
+    queueMicrotask(bindOpeners);
   });
 
+  // Capture is kept as a fallback for the tiny window before MutationObserver rebinding.
   document.addEventListener('click', (event) => {
-    const opener = event.target?.closest?.('[data-open]');
-    if (!opener) return;
-
+    const opener = event.target?.closest?.('.entry-open[data-open]');
+    if (!opener || opener.dataset.inlineEditBound === '1') return;
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
-
-    if (activeEditorId && activeEditorId !== opener.dataset.open) {
-      refreshCurrentView();
-      return;
-    }
-
+    opener.onclick = null;
+    bindOpener(opener);
     openInlineEditor(opener);
   }, true);
+
+  bindOpeners();
 })();
