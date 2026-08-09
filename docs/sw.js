@@ -1,10 +1,11 @@
-const CACHE_NAME = 'mydailylog-v14';
+const CACHE_NAME = 'mydailylog-v15';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon.svg',
   './desktop-input.css',
+  './ui-cleanup.js',
   './runtime-log-title.js',
   './mobile-composer-flow.js',
   './draft-sidepanel.css',
