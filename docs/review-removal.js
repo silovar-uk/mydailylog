@@ -138,6 +138,50 @@
       writing-mode: vertical-rl;
       text-orientation: upright;
     }
+
+    @media (max-width: 799px) {
+      .nav.nav-without-review button {
+        min-height: 42px;
+        align-items: center;
+        padding: 3px 2px 4px;
+      }
+
+      .nav.nav-without-review .nav-item-inner {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-width: 0;
+        height: auto;
+        line-height: 1;
+      }
+
+      .nav.nav-without-review .nav-emoji {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+        font-size: 13px;
+      }
+
+      .nav.nav-without-review .nav-label-slot {
+        display: block;
+        width: auto;
+        height: auto;
+      }
+
+      .nav.nav-without-review .nav-label {
+        display: block;
+        width: auto;
+        height: auto;
+        font-size: 10.5px;
+        line-height: 1;
+        letter-spacing: .01em;
+        text-align: center;
+        white-space: nowrap;
+        writing-mode: horizontal-tb;
+        text-orientation: mixed;
+      }
+    }
   `;
   document.head.append(style);
 
