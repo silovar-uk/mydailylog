@@ -1,7 +1,7 @@
 .storage-heading-row {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 3px;
   margin-bottom: 8px;
 }
 
@@ -9,28 +9,38 @@
   margin: 0;
 }
 
-.storage-help-toggle {
+/* Keep the help affordance visually attached to the heading instead of inheriting
+   the full-width settings button treatment. */
+.panel .storage-help-toggle {
   display: inline-grid;
-  width: 24px;
-  min-width: 24px;
-  height: 24px;
-  min-height: 24px;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  min-height: 22px;
+  margin: 0 0 0 1px;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--line), transparent 5%);
+  border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--faint);
+  color: color-mix(in srgb, var(--faint), transparent 16%);
   padding: 0;
-  font: 600 12px/1 'IBM Plex Mono', monospace;
-  transition: border-color .15s ease, color .15s ease, background .15s ease;
+  text-align: center;
+  font: 600 11px/1 'IBM Plex Mono', monospace;
+  transform: translateY(-1px);
+  transition: color .15s ease, background .15s ease;
 }
 
-.storage-help-toggle:hover,
-.storage-help-toggle:focus-visible,
-.storage-help-toggle.is-open {
-  border-color: color-mix(in srgb, var(--seal), var(--line) 58%);
-  background: color-mix(in srgb, var(--seal), transparent 93%);
+.panel .storage-help-toggle:hover,
+.panel .storage-help-toggle:focus-visible,
+.panel .storage-help-toggle.is-open {
+  border: 0;
+  background: color-mix(in srgb, var(--soft), transparent 15%);
   color: var(--seal);
+}
+
+.panel .storage-help-toggle:focus-visible {
+  outline-width: 2px;
+  outline-offset: 1px;
 }
 
 .data-storage-help {
