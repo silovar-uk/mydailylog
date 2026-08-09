@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mydailylog-v23';
+const CACHE_NAME = 'mydailylog-v24';
 const APP_SHELL = [
   './',
   './index.html',
@@ -24,6 +24,7 @@ const APP_SHELL = [
   './memo-terminology.js',
   './settings-storage-help.css',
   './settings-storage-help.js',
+  './review-removal.js',
 ];
 
 self.addEventListener('install', (event) => {
