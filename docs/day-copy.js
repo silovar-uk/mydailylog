@@ -70,14 +70,25 @@
     });
   }
 
+  function escapeMarkdownTitle(value) {
+    return String(value || '').replace(/\\/g, '\\\\').replace(/\*/g, '\\*');
+  }
+
   function markdownBullet(entry) {
     const content = String(entry?.content || '').trim();
+    const title = String(entry?.title || entry?.metadata?.title || '').trim();
     const time = timeFor(entry);
     if (!content) return '';
 
     const lines = content.split(/\r?\n/);
     const startsWithTime = time && new RegExp(`^${time.replace(':', '\\:')}(?:\\s|　|[：:：-])`).test(lines[0]);
     const prefix = startsWithTime || !time ? '- ' : `- ${time} `;
+
+    if (title) {
+      const body = lines.map((line) => `  ${line}`).join('\n');
+      return `${prefix}**${escapeMarkdownTitle(title)}**\n${body}`;
+    }
+
     return `${prefix}${lines[0]}${lines.slice(1).map((line) => `\n  ${line}`).join('')}`;
   }
 
@@ -86,10 +97,9 @@
   }
 
   function visibleDateKey() {
-    const ids = [...document.querySelectorAll('.entries [data-open]')]
+    return [...document.querySelectorAll('.entries [data-open]')]
       .map((button) => button.dataset.open)
       .filter(Boolean);
-    return ids;
   }
 
   async function currentDayEntries() {
@@ -135,7 +145,7 @@
     try {
       const sorted = sortEntries(entries);
       if (!sorted.length) {
-        setButtonState(button, compact ? '–' : 'ログなし', 'empty');
+        setButtonState(button, compact ? '–' : 'メモなし', 'empty');
         return;
       }
 
@@ -175,8 +185,8 @@
     button.type = 'button';
     button.textContent = 'この日をコピー';
     button.dataset.defaultLabel = 'この日をコピー';
-    button.setAttribute('aria-label', 'この日のログをMarkdownでコピー');
-    button.title = 'この日のログをMarkdownでコピー';
+    button.setAttribute('aria-label', 'この日のメモをMarkdownでコピー');
+    button.title = 'この日のメモをMarkdownでコピー';
     button.addEventListener('click', () => copyCurrentDay(button));
 
     dateRow.classList.add('has-day-copy');
@@ -191,8 +201,8 @@
     button.dataset.defaultLabel = label;
     button.dataset.compact = '1';
     button.dataset.copyDate = date;
-    button.setAttribute('aria-label', `${headingForDate(date)}のログをMarkdownでコピー`);
-    button.title = `${headingForDate(date)}のログをコピー`;
+    button.setAttribute('aria-label', `${headingForDate(date)}のメモをMarkdownでコピー`);
+    button.title = `${headingForDate(date)}のメモをコピー`;
     button.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -252,7 +262,7 @@
 
       const section = document.createElement('section');
       section.className = 'review-day-copy-section';
-      section.setAttribute('aria-label', '日ごとのログをコピー');
+      section.setAttribute('aria-label', '日ごとのメモをコピー');
       const title = document.createElement('h2');
       title.textContent = '日ごとにコピー';
       const list = document.createElement('div');
