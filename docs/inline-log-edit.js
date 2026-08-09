@@ -3,10 +3,21 @@
 
   const DB_NAME = 'mydailylog';
   const STORE = 'entries';
+  const GUIDE = 'Ctrl / Cmd + Enterで確定・Escで取消';
   let activeEditorId = null;
   let saving = false;
 
   const nowIso = () => new Date().toISOString();
+
+  function countCharacters(value) {
+    const text = String(value || '').trim();
+    if (!text) return 0;
+    if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+      const segmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
+      return [...segmenter.segment(text)].length;
+    }
+    return Array.from(text).length;
+  }
 
   function openDB() {
     return new Promise((resolve, reject) => {
@@ -80,7 +91,11 @@
     const status = document.createElement('span');
     status.className = 'inline-log-status';
     status.setAttribute('aria-live', 'polite');
-    status.textContent = 'Ctrl / Cmd + Enterで確定・Escで取消';
+
+    const setStatus = (message = GUIDE) => {
+      status.textContent = `${countCharacters(content.value)}字　${message}`;
+    };
+    setStatus();
 
     const cancel = document.createElement('button');
     cancel.type = 'button';
@@ -111,7 +126,7 @@
       if (saving) return;
       const nextContent = content.value.trim();
       if (!nextContent) {
-        status.textContent = '本文を入力して';
+        setStatus('本文を入力して');
         content.focus();
         return;
       }
@@ -119,7 +134,7 @@
       saving = true;
       save.disabled = true;
       cancel.disabled = true;
-      status.textContent = '保存中…';
+      setStatus('保存中…');
 
       entry.title = title.value.trim();
       entry.content = nextContent;
@@ -127,16 +142,20 @@
 
       try {
         await putEntry(entry);
-        status.textContent = '保存した';
+        setStatus('保存した');
         window.setTimeout(refreshCurrentView, 100);
       } catch (error) {
         console.error(error);
         saving = false;
         save.disabled = false;
         cancel.disabled = false;
-        status.textContent = '保存できなかった。もう一度試して';
+        setStatus('保存できなかった。もう一度試して');
       }
     };
+
+    content.addEventListener('input', () => {
+      if (!saving) setStatus();
+    });
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
