@@ -16,26 +16,6 @@
     return true;
   }
 
-  function normalizeReviewWording() {
-    const selectors = [
-      '.sub',
-      '.nav button',
-      '.panel h2',
-      '.panel p',
-      '.section-copy',
-      '.review-tabs button',
-    ];
-
-    document.querySelectorAll(selectors.join(',')).forEach((element) => {
-      if (element.textContent.includes('ふり返る')) {
-        element.textContent = element.textContent.replaceAll('ふり返る', '振り返る');
-      }
-      if (element.textContent.includes('ふり返り')) {
-        element.textContent = element.textContent.replaceAll('ふり返り', '振り返り');
-      }
-    });
-  }
-
   function syncNavLabels() {
     Object.entries(NAV_LABELS).forEach(([route, [emoji, label]]) => {
       const button = document.querySelector(`[data-route="${route}"]`);
@@ -64,29 +44,39 @@
     });
   }
 
-  function removeReviewUi() {
-    scheduled = false;
+  function cleanRemovedUi() {
+    document.querySelectorAll('[data-route="review"], .review, .review-tabs, .stats, .barrow').forEach((node) => node.remove());
+    document.querySelectorAll('.obi').forEach((node) => node.remove());
+    document.querySelectorAll('.related-log-panel, .related-log-preview-backdrop, .log-card-related-toggle').forEach((node) => node.remove());
+  }
 
+  function refreshUi() {
+    scheduled = false;
     if (redirectRemovedRoute()) return;
 
-    document.querySelectorAll('[data-route="review"]').forEach((button) => button.remove());
+    cleanRemovedUi();
 
     const nav = document.querySelector('.nav');
     if (nav) nav.classList.add('nav-without-review');
 
-    document.querySelectorAll('.review, .review-tabs, .stats, .barrow').forEach((element) => element.remove());
-    normalizeReviewWording();
     syncNavLabels();
   }
 
   function schedule() {
     if (scheduled) return;
     scheduled = true;
-    requestAnimationFrame(removeReviewUi);
+    requestAnimationFrame(refreshUi);
   }
 
   const style = document.createElement('style');
   style.textContent = `
+    .obi,
+    .related-log-panel,
+    .related-log-preview-backdrop,
+    .log-card-related-toggle {
+      display: none !important;
+    }
+
     .nav.nav-without-review {
       grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
       align-items: stretch;
@@ -95,20 +85,16 @@
     .nav.nav-without-review button {
       display: flex;
       min-width: 0;
-      min-height: 56px;
-      align-items: stretch;
+      min-height: 58px;
+      align-items: flex-end;
       justify-content: center;
-      padding: 5px 3px 7px;
+      padding: 5px 3px 8px;
       line-height: 1;
-      writing-mode: horizontal-tb;
-      text-orientation: mixed;
     }
 
     .nav.nav-without-review .nav-item-inner {
       display: flex;
-      width: 100%;
       min-width: 0;
-      min-height: 42px;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
@@ -121,7 +107,6 @@
       display: flex;
       width: 20px;
       height: 18px;
-      flex: 0 0 18px;
       align-items: flex-end;
       justify-content: center;
       font-size: 15px;
@@ -130,23 +115,9 @@
 
     .nav.nav-without-review .nav-label {
       display: block;
-      min-height: 13px;
       font-size: 11px;
       line-height: 13px;
       letter-spacing: 0;
-      writing-mode: horizontal-tb;
-      text-orientation: mixed;
-    }
-
-    @media (max-width: 420px) {
-      .nav.nav-without-review button {
-        padding-right: 2px;
-        padding-left: 2px;
-      }
-
-      .nav.nav-without-review .nav-item-inner {
-        gap: 2px;
-      }
     }
   `;
   document.head.append(style);
