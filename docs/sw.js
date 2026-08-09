@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mydailylog-v16';
+const CACHE_NAME = 'mydailylog-v17';
 const APP_SHELL = [
   './',
   './index.html',
@@ -20,6 +20,7 @@ const APP_SHELL = [
   './day-copy.js',
   './ui-language-meter.css',
   './ui-language-meter.js',
+  './day-title-format.js',
 ];
 
 self.addEventListener('install', (event) => {
