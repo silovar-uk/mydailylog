@@ -3,6 +3,13 @@
 
   let scheduled = false;
 
+  const NAV_LABELS = {
+    today: ['📝 今日', '今日'],
+    calendar: ['📅 日めくり', '日めくり'],
+    search: ['🔎 検索', '検索'],
+    settings: ['⚙️ 設定', '設定'],
+  };
+
   function redirectRemovedRoute() {
     if (location.hash !== '#/review') return false;
     location.hash = '#/today';
@@ -29,6 +36,15 @@
     });
   }
 
+  function syncNavLabels() {
+    Object.entries(NAV_LABELS).forEach(([route, [label, ariaLabel]]) => {
+      const button = document.querySelector(`[data-route="${route}"]`);
+      if (!button) return;
+      if (button.textContent !== label) button.textContent = label;
+      button.setAttribute('aria-label', ariaLabel);
+    });
+  }
+
   function removeReviewUi() {
     scheduled = false;
 
@@ -41,6 +57,7 @@
 
     document.querySelectorAll('.review, .review-tabs, .stats, .barrow').forEach((element) => element.remove());
     normalizeReviewWording();
+    syncNavLabels();
   }
 
   function schedule() {
