@@ -4,10 +4,10 @@
   let scheduled = false;
 
   const NAV_LABELS = {
-    today: ['📝 今日', '今日'],
-    calendar: ['📅 日めくり', '日めくり'],
-    search: ['🔎 検索', '検索'],
-    settings: ['⚙️ 設定', '設定'],
+    today: ['📝', '今日'],
+    calendar: ['📅', '日めくり'],
+    search: ['🔎', '検索'],
+    settings: ['⚙️', '設定'],
   };
 
   function redirectRemovedRoute() {
@@ -37,11 +37,30 @@
   }
 
   function syncNavLabels() {
-    Object.entries(NAV_LABELS).forEach(([route, [label, ariaLabel]]) => {
+    Object.entries(NAV_LABELS).forEach(([route, [emoji, label]]) => {
       const button = document.querySelector(`[data-route="${route}"]`);
       if (!button) return;
-      if (button.textContent !== label) button.textContent = label;
-      button.setAttribute('aria-label', ariaLabel);
+
+      const expectedKey = `${emoji}:${label}`;
+      if (button.dataset.navLabelKey !== expectedKey || !button.querySelector('.nav-item-inner')) {
+        const inner = document.createElement('span');
+        inner.className = 'nav-item-inner';
+
+        const emojiSpan = document.createElement('span');
+        emojiSpan.className = 'nav-emoji';
+        emojiSpan.setAttribute('aria-hidden', 'true');
+        emojiSpan.textContent = emoji;
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'nav-label';
+        labelSpan.textContent = label;
+
+        inner.append(emojiSpan, labelSpan);
+        button.replaceChildren(inner);
+        button.dataset.navLabelKey = expectedKey;
+      }
+
+      button.setAttribute('aria-label', label);
     });
   }
 
@@ -70,6 +89,41 @@
   style.textContent = `
     .nav.nav-without-review {
       grid-template-columns: repeat(4, 1fr) !important;
+      align-items: stretch;
+    }
+
+    .nav.nav-without-review button {
+      display: flex;
+      min-height: 52px;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0 4px 9px;
+      line-height: 1;
+    }
+
+    .nav.nav-without-review .nav-item-inner {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .nav.nav-without-review .nav-emoji {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.15em;
+      height: 1.15em;
+      flex: 0 0 1.15em;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .nav.nav-without-review .nav-label {
+      display: inline-block;
+      line-height: 1;
     }
   `;
   document.head.append(style);
