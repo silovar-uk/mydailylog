@@ -3,12 +3,38 @@
 
   let scheduled = false;
 
-  const NAV_LABELS = {
-    today: ['📝', '今日'],
-    calendar: ['📅', '日めくり'],
-    search: ['🔎', '検索'],
-    settings: ['⚙️', '設定'],
+  const NAV_ITEMS = {
+    today: {
+      label: '今日',
+      icon: '<path d="M13 21h8"/><path d="m15 5 4 4"/><path d="M17 3a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    },
+    calendar: {
+      label: '日めくり',
+      icon: '<path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>',
+    },
+    search: {
+      label: '検索',
+      icon: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    },
+    settings: {
+      label: '設定',
+      icon: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/>',
+    },
   };
+
+  function createNavIcon(pathMarkup) {
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.classList.add('nav-icon');
+    icon.setAttribute('viewBox', '0 0 24 24');
+    icon.setAttribute('fill', 'none');
+    icon.setAttribute('stroke', 'currentColor');
+    icon.setAttribute('stroke-width', '1.8');
+    icon.setAttribute('stroke-linecap', 'round');
+    icon.setAttribute('stroke-linejoin', 'round');
+    icon.setAttribute('focusable', 'false');
+    icon.innerHTML = pathMarkup;
+    return icon;
+  }
 
   function redirectRemovedRoute() {
     if (location.hash !== '#/review') return false;
@@ -17,19 +43,19 @@
   }
 
   function syncNavLabels() {
-    Object.entries(NAV_LABELS).forEach(([route, [emoji, label]]) => {
+    Object.entries(NAV_ITEMS).forEach(([route, { icon, label }]) => {
       const button = document.querySelector(`[data-route="${route}"]`);
       if (!button) return;
 
-      const expectedKey = `${emoji}:${label}`;
+      const expectedKey = `svg-v1:${label}`;
       if (button.dataset.navLabelKey !== expectedKey || !button.querySelector('.nav-item-inner')) {
         const inner = document.createElement('span');
         inner.className = 'nav-item-inner';
 
-        const emojiSpan = document.createElement('span');
-        emojiSpan.className = 'nav-emoji';
-        emojiSpan.setAttribute('aria-hidden', 'true');
-        emojiSpan.textContent = emoji;
+        const iconSlot = document.createElement('span');
+        iconSlot.className = 'nav-icon-slot';
+        iconSlot.setAttribute('aria-hidden', 'true');
+        iconSlot.append(createNavIcon(icon));
 
         const labelSlot = document.createElement('span');
         labelSlot.className = 'nav-label-slot';
@@ -39,7 +65,7 @@
         labelSpan.textContent = label;
 
         labelSlot.append(labelSpan);
-        inner.append(emojiSpan, labelSlot);
+        inner.append(iconSlot, labelSlot);
         button.replaceChildren(inner);
         button.dataset.navLabelKey = expectedKey;
       }
@@ -98,23 +124,29 @@
 
     .nav.nav-without-review .nav-item-inner {
       display: grid;
-      grid-template-rows: 18px 46px;
+      grid-template-rows: 20px 46px;
       justify-items: center;
       align-items: end;
       gap: 3px;
       min-width: 24px;
-      height: 67px;
+      height: 69px;
       line-height: 1;
     }
 
-    .nav.nav-without-review .nav-emoji {
-      display: flex;
+    .nav.nav-without-review .nav-icon-slot {
+      display: grid;
       width: 20px;
-      height: 18px;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
+      height: 20px;
+      place-items: center;
       line-height: 1;
+    }
+
+    .nav.nav-without-review .nav-icon {
+      display: block;
+      width: 20px;
+      height: 20px;
+      overflow: visible;
+      vector-effect: non-scaling-stroke;
     }
 
     .nav.nav-without-review .nav-label-slot {
@@ -167,13 +199,16 @@
         line-height: 1;
       }
 
-      .nav.nav-without-review .nav-emoji {
-        width: 15px;
-        height: 15px;
-        flex: 0 0 15px;
-        font-size: 12.5px;
+      .nav.nav-without-review .nav-icon-slot {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
         opacity: .62;
-        filter: saturate(.56);
+      }
+
+      .nav.nav-without-review .nav-icon {
+        width: 16px;
+        height: 16px;
       }
 
       .nav.nav-without-review .nav-label-slot {
@@ -203,9 +238,8 @@
         transform: translateY(1px);
       }
 
-      .nav.nav-without-review button.active .nav-emoji {
+      .nav.nav-without-review button.active .nav-icon-slot {
         opacity: .88;
-        filter: saturate(.72);
       }
     }
   `;
