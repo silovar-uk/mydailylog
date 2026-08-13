@@ -1,0 +1,90 @@
+.storage-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.storage-heading-row h2 {
+  margin: 0;
+}
+
+/* Keep the help affordance visually attached to the heading instead of inheriting
+   the full-width settings button treatment. */
+.panel .storage-help-toggle {
+  display: inline-grid;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  min-height: 22px;
+  margin: 0 0 0 1px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: color-mix(in srgb, var(--faint), transparent 16%);
+  padding: 0;
+  text-align: center;
+  font: 600 11px/1 'IBM Plex Mono', monospace;
+  transform: translateY(-1px);
+  transition: color .15s ease, background .15s ease;
+}
+
+.panel .storage-help-toggle:hover,
+.panel .storage-help-toggle:focus-visible,
+.panel .storage-help-toggle.is-open {
+  border: 0;
+  background: color-mix(in srgb, var(--soft), transparent 15%);
+  color: var(--seal);
+}
+
+.panel .storage-help-toggle:focus-visible {
+  outline-width: 2px;
+  outline-offset: 1px;
+}
+
+.data-storage-help {
+  margin: 0 0 13px;
+  border: 1px solid color-mix(in srgb, var(--line), transparent 8%);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--soft), transparent 38%);
+  padding: 11px 12px;
+}
+
+.data-storage-help[hidden] {
+  display: none;
+}
+
+.data-storage-help p {
+  margin: 0 0 8px;
+  color: var(--faint);
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+.data-storage-help p:last-child {
+  margin-bottom: 0;
+}
+
+.data-storage-help strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.storage-clear-note {
+  margin: 10px 0 4px !important;
+  color: var(--faint);
+  font-size: 12px !important;
+  line-height: 1.65;
+}
+
+.panel #clear-device-storage {
+  border-color: color-mix(in srgb, var(--seal), var(--line) 58%);
+  color: var(--seal);
+}
+
+.panel #clear-device-storage:hover,
+.panel #clear-device-storage:focus-visible {
+  background: color-mix(in srgb, var(--seal), transparent 94%);
+  border-color: color-mix(in srgb, var(--seal), var(--line) 35%);
+}

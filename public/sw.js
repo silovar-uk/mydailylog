@@ -1,5 +1,38 @@
-const CACHE_NAME = 'mydailylog-v2';
-const APP_SHELL = ['./', './index.html'];
+const CACHE_NAME = 'mydailylog-__BUILD_HASH__';
+const BUILD_ASSETS = [];
+const APP_SHELL = [
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './icon.svg',
+  './desktop-input.css',
+  './ui-cleanup.js',
+  './runtime-log-title.js',
+  './mobile-composer-flow.js',
+  './draft-sidepanel.css',
+  './memo-collapsed-hint.css',
+  './draft-sidepanel.js',
+  './inline-log-edit.css',
+  './inline-log-edit.js',
+  './memo-shortcuts.js',
+  './log-card-ux.css',
+  './log-card-ux.js',
+  './card-copy.js',
+  './day-copy.css',
+  './day-copy.js',
+  './day-tidy.css',
+  './day-tidy.js',
+  './ui-language-meter.css',
+  './ui-language-meter.js',
+  './day-title-format.js',
+  './memo-terminology.js',
+  './settings-storage-help.css',
+  './settings-storage-help.js',
+  './settings-update-history.css',
+  './settings-update-history.js',
+  './review-removal.js',
+  ...BUILD_ASSETS,
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -8,7 +41,7 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(caches.keys().then((keys) => Promise.all(keys
-    .filter((key) => key !== CACHE_NAME)
+    .filter((key) => key.startsWith('mydailylog-') && key !== CACHE_NAME)
     .map((key) => caches.delete(key)))));
   self.clients.claim();
 });

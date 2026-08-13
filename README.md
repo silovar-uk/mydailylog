@@ -20,13 +20,23 @@ npm install
 npm run dev
 ```
 
+## ソースと公開物
+
+- `src/`: アプリ本体と、Viteが使うHTMLテンプレート
+- `public/`: 追加UI、PWA、アイコンなど、そのまま公開する静的ファイル
+- `docs/`: `npm run build`で毎回作り直す公開物。直接編集しない
+
+ビルド後は、参照ファイルの欠落、Service Workerのキャッシュ対象、JavaScript構文を自動検査する。Service Workerのキャッシュ名とVite生成アセットの一覧も、内容に応じて自動更新される。
+
 ## GitHub Pagesで公開
 
-`npm run build` で生成される `docs/` を公開対象にする。
+`npm run build` で生成される `docs/` を公開対象にする。リポジトリ直下の`index.html`は、公開URLから`docs/`へ移動するための入口として残す。
 GitHub の **Settings → Pages** で、以下を選択する。
 
 - Source: Deploy from a branch
 - Branch: `main`
-- Folder: `/docs`
+- Folder: `/(root)`
+
+リポジトリ直下の入口から、`docs/`に生成されたアプリへ移動する構成。現在のGitHub Pages設定と一致させる。
 
 このアプリのログ本体はブラウザのIndexedDBにだけ保存され、リポジトリには保存されない。ブラウザのデータ削除や端末変更に備え、設定画面から定期的にJSONバックアップを取る。

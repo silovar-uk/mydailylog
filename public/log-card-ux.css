@@ -1,0 +1,128 @@
+/* Replace classification-first cards with reflection-first metadata and actions. */
+.quick,
+.entry-icon,
+.priority,
+.suggest,
+.meta {
+  display: none !important;
+}
+
+.entries {
+  margin-top: 10px;
+}
+
+.card.classification-hidden .entry-open {
+  width: calc(100% - 42px);
+  gap: 0;
+  padding-bottom: 8px;
+}
+
+.card.classification-hidden .entry-body {
+  width: 100%;
+}
+
+.card.is-pinned {
+  border-color: color-mix(in srgb, var(--seal), var(--line) 55%);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--seal), transparent 88%);
+}
+
+.card.is-pinned::before {
+  content: "PIN";
+  position: absolute;
+  top: 7px;
+  right: 41px;
+  color: color-mix(in srgb, var(--seal), transparent 22%);
+  font: 600 9px/1 IBM Plex Mono, monospace;
+  letter-spacing: .08em;
+}
+
+.log-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 11px 9px;
+  padding-top: 7px;
+  border-top: 1px solid color-mix(in srgb, var(--line), transparent 34%);
+}
+
+.log-card-timestamps {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 10px;
+  min-width: 0;
+  color: color-mix(in srgb, var(--faint), transparent 14%);
+  font: 10px/1.45 IBM Plex Mono, monospace;
+}
+
+.memo-char-count {
+  color: color-mix(in srgb, var(--faint), transparent 28%);
+}
+
+.log-card-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2px;
+}
+
+.log-card-action {
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: 7px;
+  color: var(--faint);
+  font-size: 14px;
+}
+
+.log-card-action:hover,
+.log-card-action[aria-pressed="true"] {
+  background: var(--soft);
+  color: var(--seal);
+}
+
+.log-card-favorite[aria-pressed="true"] span {
+  font-size: 0;
+}
+
+.log-card-favorite[aria-pressed="true"] span::after {
+  content: "★";
+  font-size: 14px;
+}
+
+.log-card-pin[aria-pressed="true"] {
+  transform: rotate(-18deg);
+}
+
+.related-log-panel,
+.related-log-preview-backdrop,
+.log-card-related-toggle {
+  display: none !important;
+}
+
+.side-memo-shortcut-hint {
+  display: none;
+}
+
+@media (min-width: 800px) {
+  .side-memo-shortcut-hint {
+    display: block;
+    margin-top: 5px;
+    color: color-mix(in srgb, var(--faint), transparent 34%);
+    font: 10px/1.4 IBM Plex Mono, monospace;
+    letter-spacing: .01em;
+  }
+}
+
+@media (max-width: 799px) {
+  .log-card-footer {
+    align-items: center;
+  }
+
+  .log-card-timestamps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+  }
+}

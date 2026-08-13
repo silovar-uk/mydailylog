@@ -1,4 +1,8 @@
-const CACHE_NAME = 'mydailylog-v40';
+const CACHE_NAME = 'mydailylog-57b1f317435e';
+const BUILD_ASSETS = [
+  "./assets/index-rMF6N0h3.js",
+  "./assets/index-xakSd8cV.css"
+];
 const APP_SHELL = [
   './',
   './index.html',
@@ -30,6 +34,7 @@ const APP_SHELL = [
   './settings-update-history.css',
   './settings-update-history.js',
   './review-removal.js',
+  ...BUILD_ASSETS,
 ];
 
 self.addEventListener('install', (event) => {

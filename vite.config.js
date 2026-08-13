@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  root: 'src',
   base: './',
+  publicDir: '../public',
   build: {
-    outDir: 'docs',
+    outDir: '../docs',
     emptyOutDir: true,
   },
 });

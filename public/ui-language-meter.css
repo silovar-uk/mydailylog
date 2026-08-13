@@ -1,0 +1,33 @@
+.moods button[data-meter-filled="true"] {
+  transition: color .16s ease;
+}
+
+.moods button[data-meter-filled="false"] {
+  color: var(--line);
+  transition: color .16s ease;
+}
+
+.moods button[data-meter-filled="true"][data-meter-level="1"] {
+  color: var(--moss);
+}
+
+.moods button[data-meter-filled="true"][data-meter-level="2"] {
+  color: color-mix(in srgb, var(--moss) 72%, var(--seal) 28%);
+}
+
+.moods button[data-meter-filled="true"][data-meter-level="3"] {
+  color: color-mix(in srgb, var(--moss) 50%, var(--seal) 50%);
+}
+
+.moods button[data-meter-filled="true"][data-meter-level="4"] {
+  color: color-mix(in srgb, var(--moss) 26%, var(--seal) 74%);
+}
+
+.moods button[data-meter-filled="true"][data-meter-level="5"] {
+  color: var(--seal);
+}
+
+#daytitle::placeholder {
+  color: var(--faint);
+  opacity: .52;
+}

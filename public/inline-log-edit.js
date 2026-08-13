@@ -1,0 +1,222 @@
+(() => {
+  'use strict';
+
+  const DB_NAME = 'mydailylog';
+  const STORE = 'entries';
+  const GUIDE = 'Ctrl / Cmd + Enterで確定・Escで取消';
+  let activeEditorId = null;
+  let saving = false;
+
+  const nowIso = () => new Date().toISOString();
+
+  function countCharacters(value) {
+    const text = String(value || '').trim();
+    if (!text) return 0;
+    if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+      const segmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
+      return [...segmenter.segment(text)].length;
+    }
+    return Array.from(text).length;
+  }
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, 1);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function getEntry(id) {
+    const database = await openDB();
+    return new Promise((resolve, reject) => {
+      const request = database.transaction(STORE, 'readonly').objectStore(STORE).get(id);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function putEntry(entry) {
+    const database = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(STORE, 'readwrite');
+      transaction.objectStore(STORE).put(entry);
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  function refreshCurrentView() {
+    activeEditorId = null;
+    saving = false;
+    const activeRoute = document.querySelector('[data-route].active');
+    const fallbackRoute = document.querySelector('[data-route="today"]');
+    (activeRoute || fallbackRoute)?.click();
+  }
+
+  async function openInlineEditor(opener) {
+    const id = opener?.dataset?.open;
+    const card = opener?.closest?.('.card');
+    if (!id || !card || card.dataset.inlineEditing === 'true') return;
+
+    activeEditorId = id;
+    card.dataset.inlineEditing = 'true';
+    card.classList.add('is-inline-editing');
+
+    const entry = await getEntry(id).catch(() => null);
+    if (!entry || !card.isConnected || activeEditorId !== id) {
+      refreshCurrentView();
+      return;
+    }
+
+    const form = document.createElement('form');
+    form.className = 'inline-log-editor';
+    form.dataset.inlineEditor = id;
+    form.noValidate = true;
+
+    const title = document.createElement('input');
+    title.type = 'text';
+    title.className = 'inline-log-title';
+    title.autocomplete = 'off';
+    title.placeholder = '題名';
+    title.setAttribute('aria-label', '題名');
+    title.value = entry.title || entry.metadata?.title || '';
+
+    const content = document.createElement('textarea');
+    content.className = 'inline-log-content';
+    content.placeholder = '本文';
+    content.setAttribute('aria-label', '本文');
+    content.value = entry.content || '';
+
+    const status = document.createElement('span');
+    status.className = 'inline-log-status';
+    status.setAttribute('aria-live', 'polite');
+
+    const setStatus = (message = GUIDE) => {
+      status.textContent = `${countCharacters(content.value)}字　${message}`;
+    };
+    setStatus();
+
+    const cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.className = 'inline-log-cancel';
+    cancel.textContent = '取消';
+
+    const save = document.createElement('button');
+    save.type = 'submit';
+    save.className = 'inline-log-save';
+    save.textContent = '確定';
+
+    const actions = document.createElement('div');
+    actions.className = 'inline-log-actions';
+    const buttons = document.createElement('div');
+    buttons.className = 'inline-log-buttons';
+    buttons.append(cancel, save);
+    actions.append(status, buttons);
+
+    form.append(title, content, actions);
+    card.replaceChildren(form);
+
+    const cancelEdit = () => {
+      if (saving) return;
+      refreshCurrentView();
+    };
+
+    const saveEdit = async () => {
+      if (saving) return;
+      const nextContent = content.value.trim();
+      if (!nextContent) {
+        setStatus('本文を入力して');
+        content.focus();
+        return;
+      }
+
+      saving = true;
+      save.disabled = true;
+      cancel.disabled = true;
+      setStatus('保存中…');
+
+      entry.title = title.value.trim();
+      entry.content = nextContent;
+      entry.updatedAt = nowIso();
+
+      try {
+        await putEntry(entry);
+        setStatus('保存した');
+        window.setTimeout(refreshCurrentView, 100);
+      } catch (error) {
+        console.error(error);
+        saving = false;
+        save.disabled = false;
+        cancel.disabled = false;
+        setStatus('保存できなかった。もう一度試して');
+      }
+    };
+
+    content.addEventListener('input', () => {
+      if (!saving) setStatus();
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      saveEdit();
+    });
+
+    form.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        saveEdit();
+        return;
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        cancelEdit();
+      }
+    });
+
+    cancel.addEventListener('click', cancelEdit);
+
+    window.setTimeout(() => {
+      content.focus({ preventScroll: true });
+      content.setSelectionRange(content.value.length, content.value.length);
+    }, 0);
+  }
+
+  function markOpeners() {
+    document.querySelectorAll('.entry-open[data-open]').forEach((opener) => {
+      opener.setAttribute('aria-label', 'このメモを編集');
+    });
+  }
+
+  // Intercept before the base app's target-level onclick handler runs.
+  // This removes the timing race that previously sent some clicks into the old detail flow.
+  document.addEventListener('click', (event) => {
+    const opener = event.target?.closest?.('.entry-open[data-open]');
+    if (!opener) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    openInlineEditor(opener);
+  }, true);
+
+  const observer = new MutationObserver(() => {
+    markOpeners();
+    if (activeEditorId && !document.querySelector('.inline-log-editor')) {
+      activeEditorId = null;
+      saving = false;
+    }
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+
+  window.addEventListener('hashchange', () => {
+    activeEditorId = null;
+    saving = false;
+    queueMicrotask(markOpeners);
+  });
+
+  markOpeners();
+})();

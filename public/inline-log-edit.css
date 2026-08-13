@@ -1,0 +1,133 @@
+.card.is-inline-editing {
+  border-color: color-mix(in srgb, var(--seal), var(--line) 45%);
+  background: var(--card);
+  padding: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+}
+
+/* Editing mode: keep the selected memo in focus and reclaim the writing area. */
+#view:has(.inline-log-editor) .composer {
+  display: none !important;
+}
+
+.entries:has(.inline-log-editor) {
+  margin-top: 6px;
+}
+
+.entries:has(.inline-log-editor) .card:not(.is-inline-editing) {
+  display: none !important;
+}
+
+.entries:has(.inline-log-editor) .card.is-inline-editing {
+  width: 100%;
+  margin: 0;
+}
+
+.inline-log-editor {
+  display: grid;
+  gap: 11px;
+  padding: 14px;
+}
+
+.inline-log-title,
+.inline-log-content {
+  width: 100%;
+  color: var(--ink);
+}
+
+.inline-log-title {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  padding: 2px 1px 8px;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 18px;
+}
+
+.inline-log-content {
+  min-height: clamp(320px, 56dvh, 720px);
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  padding: 14px 15px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.inline-log-title::placeholder,
+.inline-log-content::placeholder {
+  color: color-mix(in srgb, var(--faint), transparent 18%);
+}
+
+.inline-log-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inline-log-status {
+  color: var(--faint);
+  font-size: 11px;
+}
+
+.inline-log-buttons {
+  display: flex;
+  gap: 7px;
+}
+
+.inline-log-buttons button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.inline-log-cancel {
+  background: transparent;
+  color: var(--faint);
+}
+
+.inline-log-save {
+  border-color: var(--seal) !important;
+  background: var(--seal);
+  color: white;
+  font-weight: 700;
+}
+
+.inline-log-buttons button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+#detail-modal .eyebrow {
+  color: color-mix(in srgb, var(--faint), transparent 55%);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .02em;
+}
+
+@media (max-width: 560px) {
+  .inline-log-editor {
+    padding: 10px;
+  }
+
+  .inline-log-content {
+    min-height: clamp(280px, 50dvh, 560px);
+    padding: 12px;
+  }
+
+  .inline-log-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inline-log-buttons {
+    width: 100%;
+  }
+
+  .inline-log-buttons button {
+    flex: 1;
+  }
+}
