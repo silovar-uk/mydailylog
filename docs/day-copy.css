@@ -10,7 +10,16 @@
   text-align: center;
 }
 
-#copy-day-logs {
+.day-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+
+#copy-day-logs,
+#chatgpt-day-logs {
   min-height: 32px;
   border: 1px solid color-mix(in srgb, var(--line), transparent 18%);
   border-radius: 999px;
@@ -21,28 +30,45 @@
   font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
-  transition: border-color .15s ease, color .15s ease, background .15s ease;
+  transition: border-color .15s ease, color .15s ease, background .15s ease, transform .15s ease;
+}
+
+#chatgpt-day-logs {
+  border-color: color-mix(in srgb, var(--seal), var(--line) 68%);
+  background: color-mix(in srgb, var(--card), var(--seal) 4%);
+  color: color-mix(in srgb, var(--ink), var(--seal) 22%);
 }
 
 #copy-day-logs:hover,
-#copy-day-logs:focus-visible {
+#copy-day-logs:focus-visible,
+#chatgpt-day-logs:hover,
+#chatgpt-day-logs:focus-visible {
   border-color: color-mix(in srgb, var(--seal), var(--line) 62%);
-  background: color-mix(in srgb, var(--card), transparent 48%);
+  background: color-mix(in srgb, var(--card), transparent 35%);
   color: var(--seal);
 }
 
-#copy-day-logs[data-state='success'] {
+#chatgpt-day-logs:hover,
+#chatgpt-day-logs:focus-visible {
+  transform: translateY(-1px);
+}
+
+#copy-day-logs[data-state='success'],
+#chatgpt-day-logs[data-state='success'] {
   border-color: color-mix(in srgb, var(--moss), var(--line) 62%);
   color: var(--moss);
 }
 
-#copy-day-logs[data-state='error'] {
+#copy-day-logs[data-state='error'],
+#chatgpt-day-logs[data-state='error'] {
   border-color: color-mix(in srgb, var(--seal), var(--line) 58%);
   color: var(--seal);
 }
 
 #copy-day-logs[data-state='busy'],
-#copy-day-logs[data-state='empty'] {
+#copy-day-logs[data-state='empty'],
+#chatgpt-day-logs[data-state='busy'],
+#chatgpt-day-logs[data-state='empty'] {
   color: var(--faint);
 }
 
@@ -204,11 +230,19 @@
     grid-row: 1;
   }
 
-  #copy-day-logs {
-    grid-column: 2;
+  .day-actions {
+    grid-column: 1 / -1;
     grid-row: 2;
     justify-self: center;
+    justify-content: center;
+    flex-wrap: wrap;
     margin-top: -2px;
+  }
+
+  #copy-day-logs,
+  #chatgpt-day-logs {
+    min-height: 31px;
+    padding-inline: 9px;
   }
 
   .calendar-day-copy {
