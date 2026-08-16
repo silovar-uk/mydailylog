@@ -4,6 +4,9 @@
   const DB_NAME = 'mydailylog';
   const STORE = 'entries';
   const BUTTON_ID = 'copy-day-logs';
+  const CHATGPT_BUTTON_ID = 'chatgpt-day-logs';
+  const CHATGPT_BASE_URL = 'https://chatgpt.com/';
+  const CHATGPT_PROMPT_URL_LIMIT = 7000;
 
   function openDB() {
     return new Promise((resolve, reject) => {
@@ -136,6 +139,49 @@
     button.dataset.state = state;
   }
 
+  function markdownForEntries(entries, date) {
+    const sorted = sortEntries(entries);
+    if (!sorted.length) return '';
+    const resolvedDate = date || sorted[0]?.date;
+    const body = sorted.map(markdownBullet).filter(Boolean).join('\n');
+    return `# ${headingForDate(resolvedDate)}\n${body}`;
+  }
+
+  function promptForEntries(entries, date) {
+    const sorted = sortEntries(entries);
+    if (!sorted.length) return '';
+    const resolvedDate = date || sorted[0]?.date;
+    const markdown = markdownForEntries(sorted, resolvedDate);
+    return [
+      `以下は${headingForDate(resolvedDate)}の日記です。`,
+      'この日記について一緒に振り返ってください。要約だけで終わらず、印象に残る出来事や変化、気になった点を拾いながら対話してください。必要なら質問は一度に1つずつしてください。',
+      '',
+      markdown,
+    ].join('\n');
+  }
+
+  function openPendingChatWindow() {
+    const popup = window.open('about:blank', '_blank');
+    if (!popup) return null;
+    try {
+      popup.opener = null;
+      popup.document.title = 'ChatGPTを開いています…';
+      popup.document.body.style.cssText = 'font-family:system-ui,sans-serif;padding:24px;line-height:1.6;color:#222';
+      popup.document.body.textContent = 'ChatGPTを開いています…';
+    } catch (error) {
+      // Some browsers restrict access immediately. Navigation can still succeed.
+    }
+    return popup;
+  }
+
+  function navigateToChatGPT(popup, url) {
+    if (popup && !popup.closed) {
+      popup.location.replace(url);
+      return;
+    }
+    window.location.assign(url);
+  }
+
   async function copyEntries(entries, date, button) {
     if (button.dataset.busy === '1') return;
     button.dataset.busy = '1';
@@ -143,15 +189,12 @@
     setButtonState(button, compact ? '…' : 'コピー中…', 'busy');
 
     try {
-      const sorted = sortEntries(entries);
-      if (!sorted.length) {
+      const markdown = markdownForEntries(entries, date);
+      if (!markdown) {
         setButtonState(button, compact ? '–' : 'メモなし', 'empty');
         return;
       }
 
-      const resolvedDate = date || sorted[0]?.date;
-      const body = sorted.map(markdownBullet).filter(Boolean).join('\n');
-      const markdown = `# ${headingForDate(resolvedDate)}\n${body}`;
       await writeClipboard(markdown);
       setButtonState(button, compact ? '✓' : 'コピー済み ✓', 'success');
     } catch (error) {
@@ -160,6 +203,45 @@
     } finally {
       button.dataset.busy = '0';
       window.setTimeout(() => setButtonState(button, defaultLabel(button)), 1800);
+    }
+  }
+
+  async function openEntriesInChatGPT(entries, date, button, popup) {
+    const prompt = promptForEntries(entries, date);
+    if (!prompt) {
+      if (popup && !popup.closed) popup.close();
+      setButtonState(button, 'メモなし', 'empty');
+      return;
+    }
+
+    const promptUrl = `${CHATGPT_BASE_URL}?prompt=${encodeURIComponent(prompt)}`;
+    if (promptUrl.length <= CHATGPT_PROMPT_URL_LIMIT) {
+      navigateToChatGPT(popup, promptUrl);
+      setButtonState(button, 'ChatGPTを開いた ↗', 'success');
+      return;
+    }
+
+    await writeClipboard(prompt);
+    navigateToChatGPT(popup, CHATGPT_BASE_URL);
+    setButtonState(button, '長文をコピーして開いた', 'success');
+  }
+
+  async function openCurrentDayInChatGPT(button) {
+    if (button.dataset.busy === '1') return;
+    button.dataset.busy = '1';
+    setButtonState(button, '準備中…', 'busy');
+    const popup = openPendingChatWindow();
+
+    try {
+      const entries = await currentDayEntries();
+      await openEntriesInChatGPT(entries, entries[0]?.date || null, button, popup);
+    } catch (error) {
+      console.error('[day-copy] ChatGPT handoff failed', error);
+      if (popup && !popup.closed) popup.close();
+      setButtonState(button, '接続できず', 'error');
+    } finally {
+      button.dataset.busy = '0';
+      window.setTimeout(() => setButtonState(button, defaultLabel(button)), 2400);
     }
   }
 
@@ -175,22 +257,35 @@
 
   function enhanceDayHeader() {
     const dateRow = document.querySelector('.dayhead .date-row');
-    if (!dateRow || dateRow.querySelector(`#${BUTTON_ID}`)) return;
+    if (!dateRow || dateRow.querySelector(`#${BUTTON_ID}`) || dateRow.querySelector(`#${CHATGPT_BUTTON_ID}`)) return;
 
     const next = dateRow.querySelector('#next');
     if (!next) return;
 
-    const button = document.createElement('button');
-    button.id = BUTTON_ID;
-    button.type = 'button';
-    button.textContent = 'この日をコピー';
-    button.dataset.defaultLabel = 'この日をコピー';
-    button.setAttribute('aria-label', 'この日のメモをMarkdownでコピー');
-    button.title = 'この日のメモをMarkdownでコピー';
-    button.addEventListener('click', () => copyCurrentDay(button));
+    const actions = document.createElement('div');
+    actions.className = 'day-actions';
 
+    const copyButton = document.createElement('button');
+    copyButton.id = BUTTON_ID;
+    copyButton.type = 'button';
+    copyButton.textContent = 'この日をコピー';
+    copyButton.dataset.defaultLabel = 'この日をコピー';
+    copyButton.setAttribute('aria-label', 'この日のメモをMarkdownでコピー');
+    copyButton.title = 'この日のメモをMarkdownでコピー';
+    copyButton.addEventListener('click', () => copyCurrentDay(copyButton));
+
+    const chatButton = document.createElement('button');
+    chatButton.id = CHATGPT_BUTTON_ID;
+    chatButton.type = 'button';
+    chatButton.textContent = 'ChatGPTで話す ↗';
+    chatButton.dataset.defaultLabel = 'ChatGPTで話す ↗';
+    chatButton.setAttribute('aria-label', 'この日のメモをChatGPTに渡して振り返る');
+    chatButton.title = 'この日のメモをChatGPTに渡して振り返る';
+    chatButton.addEventListener('click', () => openCurrentDayInChatGPT(chatButton));
+
+    actions.append(copyButton, chatButton);
     dateRow.classList.add('has-day-copy');
-    dateRow.insertBefore(button, next);
+    dateRow.insertBefore(actions, next);
   }
 
   function makeCompactCopyButton(date, className, label = '⧉') {
