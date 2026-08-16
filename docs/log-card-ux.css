@@ -82,6 +82,22 @@
   color: var(--seal);
 }
 
+.log-card-chatgpt {
+  width: auto;
+  padding-inline: 6px;
+}
+
+.log-card-chatgpt span {
+  font: 650 9px/1 IBM Plex Mono, monospace;
+  letter-spacing: -.03em;
+}
+
+.log-card-chatgpt:hover,
+.log-card-chatgpt:focus-visible {
+  background: var(--soft);
+  color: var(--seal);
+}
+
 .log-card-favorite[aria-pressed="true"] span {
   font-size: 0;
 }
