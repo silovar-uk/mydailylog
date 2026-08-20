@@ -1,26 +1,37 @@
 /* Memo card color palette + clearer push-pin icon. */
 .card[data-card-color="cream"] {
-  background: color-mix(in srgb, var(--card) 82%, #f1dfb9 18%);
+  background: color-mix(in srgb, var(--card) 68%, #e8c987 32%);
+  border-color: color-mix(in srgb, var(--line) 62%, #c9a65d 38%);
 }
 
 .card[data-card-color="blue"] {
-  background: color-mix(in srgb, var(--card) 82%, #cfe1ee 18%);
+  background: color-mix(in srgb, var(--card) 68%, #add0e2 32%);
+  border-color: color-mix(in srgb, var(--line) 62%, #7daac0 38%);
 }
 
 .card[data-card-color="green"] {
-  background: color-mix(in srgb, var(--card) 82%, #d5e6d1 18%);
+  background: color-mix(in srgb, var(--card) 68%, #b8d7b0 32%);
+  border-color: color-mix(in srgb, var(--line) 62%, #88af80 38%);
 }
 
 .dark .card[data-card-color="cream"] {
-  background: color-mix(in srgb, var(--card) 88%, #6a5738 12%);
+  background: color-mix(in srgb, var(--card) 77%, #745a32 23%);
+  border-color: color-mix(in srgb, var(--line) 68%, #9a7642 32%);
 }
 
 .dark .card[data-card-color="blue"] {
-  background: color-mix(in srgb, var(--card) 88%, #385666 12%);
+  background: color-mix(in srgb, var(--card) 77%, #365f73 23%);
+  border-color: color-mix(in srgb, var(--line) 68%, #4e8299 32%);
 }
 
 .dark .card[data-card-color="green"] {
-  background: color-mix(in srgb, var(--card) 88%, #405c43 12%);
+  background: color-mix(in srgb, var(--card) 77%, #476a49 23%);
+  border-color: color-mix(in srgb, var(--line) 68%, #618763 32%);
+}
+
+/* Pinned state must stay stronger than the color-category border. */
+.card.is-pinned[data-card-color] {
+  border-color: color-mix(in srgb, var(--seal), var(--line) 52%);
 }
 
 .log-card-pin.has-pushpin-icon {
@@ -60,10 +71,41 @@
   place-items: center;
 }
 
+.memo-color-picker.is-open .memo-color-trigger {
+  background: var(--soft);
+  color: var(--seal);
+}
+
 .palette-icon {
-  width: 17px;
-  height: 17px;
-  fill: currentColor;
+  width: 19px;
+  height: 19px;
+  overflow: visible;
+}
+
+.palette-icon .palette-shell {
+  fill: color-mix(in srgb, currentColor, transparent 94%);
+  stroke: currentColor;
+  stroke-width: 1.55;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.palette-icon .palette-thumb-hole {
+  fill: var(--card);
+  stroke: currentColor;
+  stroke-width: 1.15;
+}
+
+.palette-icon .palette-dot-cream {
+  fill: #d6aa55;
+}
+
+.palette-icon .palette-dot-blue {
+  fill: #72a9c4;
+}
+
+.palette-icon .palette-dot-green {
+  fill: #78a86f;
 }
 
 .memo-color-palette {
@@ -72,12 +114,12 @@
   right: 0;
   bottom: calc(100% + 7px);
   display: none;
-  grid-template-columns: repeat(4, 30px);
-  gap: 5px;
+  grid-template-columns: repeat(4, 32px);
+  gap: 6px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 11px;
   background: var(--card);
-  padding: 7px;
+  padding: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, .14);
 }
 
@@ -86,11 +128,12 @@
 }
 
 .memo-color-swatch {
+  position: relative;
   display: grid;
-  width: 30px;
-  min-width: 30px;
-  height: 30px;
-  min-height: 30px;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--line), transparent 8%);
   border-radius: 50%;
@@ -99,9 +142,9 @@
 
 .memo-color-swatch > span {
   display: block;
-  width: 20px;
-  height: 20px;
-  border: 1px solid color-mix(in srgb, var(--line), transparent 15%);
+  width: 22px;
+  height: 22px;
+  border: 1px solid color-mix(in srgb, var(--line), transparent 8%);
   border-radius: 50%;
 }
 
@@ -110,20 +153,45 @@
 }
 
 .memo-color-swatch.swatch-cream > span {
-  background: color-mix(in srgb, var(--card) 60%, #f1dfb9 40%);
+  background: color-mix(in srgb, var(--card) 28%, #e8c987 72%);
 }
 
 .memo-color-swatch.swatch-blue > span {
-  background: color-mix(in srgb, var(--card) 60%, #cfe1ee 40%);
+  background: color-mix(in srgb, var(--card) 28%, #add0e2 72%);
 }
 
 .memo-color-swatch.swatch-green > span {
-  background: color-mix(in srgb, var(--card) 60%, #d5e6d1 40%);
+  background: color-mix(in srgb, var(--card) 28%, #b8d7b0 72%);
+}
+
+.dark .memo-color-swatch.swatch-cream > span {
+  background: color-mix(in srgb, var(--card) 35%, #8d6b38 65%);
+}
+
+.dark .memo-color-swatch.swatch-blue > span {
+  background: color-mix(in srgb, var(--card) 35%, #45758b 65%);
+}
+
+.dark .memo-color-swatch.swatch-green > span {
+  background: color-mix(in srgb, var(--card) 35%, #56805a 65%);
 }
 
 .memo-color-swatch[aria-pressed="true"] {
   border-color: var(--seal);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--seal), transparent 75%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--seal), transparent 72%);
+}
+
+.memo-color-swatch[aria-pressed="true"]::after {
+  content: "✓";
+  position: absolute;
+  display: grid;
+  width: 14px;
+  height: 14px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--card);
+  font: 700 9px/14px 'Zen Kaku Gothic New', sans-serif;
 }
 
 .memo-color-swatch:hover,
@@ -133,15 +201,20 @@
 
 @media (max-width: 420px) {
   .memo-color-palette {
-    grid-template-columns: repeat(4, 28px);
-    gap: 4px;
-    padding: 6px;
+    grid-template-columns: repeat(4, 30px);
+    gap: 5px;
+    padding: 7px;
   }
 
   .memo-color-swatch {
-    width: 28px;
-    min-width: 28px;
-    height: 28px;
-    min-height: 28px;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+  }
+
+  .memo-color-swatch > span {
+    width: 21px;
+    height: 21px;
   }
 }
