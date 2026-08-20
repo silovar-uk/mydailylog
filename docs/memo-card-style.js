@@ -53,10 +53,11 @@
   function paletteSvg() {
     return `
       <svg class="palette-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <circle cx="8" cy="8" r="2.2" />
-        <circle cx="16" cy="8" r="2.2" />
-        <circle cx="8" cy="16" r="2.2" />
-        <circle cx="16" cy="16" r="2.2" />
+        <path class="palette-shell" d="M11.8 3.1c-5.1 0-9 3.7-9 8.5 0 4.7 3.6 8.2 8 8.2h1.2c1.4 0 2.2-.8 2.2-1.8 0-.7-.4-1.2-.9-1.7-.5-.5-.2-1.3.6-1.3h2.2c3 0 5-2.2 5-5 0-4-4-6.9-9.3-6.9Z" />
+        <circle class="palette-thumb-hole" cx="16.6" cy="8.2" r="1.7" />
+        <circle class="palette-dot-cream" cx="8.3" cy="7.1" r="1.45" />
+        <circle class="palette-dot-blue" cx="6.3" cy="11.4" r="1.45" />
+        <circle class="palette-dot-green" cx="9.1" cy="15.1" r="1.45" />
       </svg>`;
   }
 
