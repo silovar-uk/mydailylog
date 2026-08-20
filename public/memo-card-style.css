@@ -1,0 +1,147 @@
+/* Memo card color palette + clearer push-pin icon. */
+.card[data-card-color="cream"] {
+  background: color-mix(in srgb, var(--card) 82%, #f1dfb9 18%);
+}
+
+.card[data-card-color="blue"] {
+  background: color-mix(in srgb, var(--card) 82%, #cfe1ee 18%);
+}
+
+.card[data-card-color="green"] {
+  background: color-mix(in srgb, var(--card) 82%, #d5e6d1 18%);
+}
+
+.dark .card[data-card-color="cream"] {
+  background: color-mix(in srgb, var(--card) 88%, #6a5738 12%);
+}
+
+.dark .card[data-card-color="blue"] {
+  background: color-mix(in srgb, var(--card) 88%, #385666 12%);
+}
+
+.dark .card[data-card-color="green"] {
+  background: color-mix(in srgb, var(--card) 88%, #405c43 12%);
+}
+
+.log-card-pin.has-pushpin-icon {
+  display: inline-grid;
+  place-items: center;
+}
+
+.log-card-pin .pushpin-icon {
+  width: 18px;
+  height: 18px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform-origin: 50% 52%;
+  transition: transform .16s ease, fill .16s ease;
+}
+
+.log-card-pin[aria-pressed="true"] .pushpin-icon {
+  fill: currentColor;
+  transform: rotate(-8deg);
+}
+
+.log-card-pin[aria-pressed="true"] {
+  transform: rotate(-10deg);
+}
+
+.memo-color-picker {
+  position: relative;
+  display: inline-flex;
+}
+
+.memo-color-trigger {
+  display: inline-grid;
+  place-items: center;
+}
+
+.palette-icon {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
+.memo-color-palette {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  bottom: calc(100% + 7px);
+  display: none;
+  grid-template-columns: repeat(4, 30px);
+  gap: 5px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 7px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .14);
+}
+
+.memo-color-picker.is-open .memo-color-palette {
+  display: grid;
+}
+
+.memo-color-swatch {
+  display: grid;
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  min-height: 30px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--line), transparent 8%);
+  border-radius: 50%;
+  padding: 0;
+}
+
+.memo-color-swatch > span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid color-mix(in srgb, var(--line), transparent 15%);
+  border-radius: 50%;
+}
+
+.memo-color-swatch.swatch-default > span {
+  background: var(--card);
+}
+
+.memo-color-swatch.swatch-cream > span {
+  background: color-mix(in srgb, var(--card) 60%, #f1dfb9 40%);
+}
+
+.memo-color-swatch.swatch-blue > span {
+  background: color-mix(in srgb, var(--card) 60%, #cfe1ee 40%);
+}
+
+.memo-color-swatch.swatch-green > span {
+  background: color-mix(in srgb, var(--card) 60%, #d5e6d1 40%);
+}
+
+.memo-color-swatch[aria-pressed="true"] {
+  border-color: var(--seal);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--seal), transparent 75%);
+}
+
+.memo-color-swatch:hover,
+.memo-color-swatch:focus-visible {
+  background: var(--soft);
+}
+
+@media (max-width: 420px) {
+  .memo-color-palette {
+    grid-template-columns: repeat(4, 28px);
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .memo-color-swatch {
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    min-height: 28px;
+  }
+}
