@@ -812,7 +812,9 @@ async function saveComposer(date) {
       if (composerNotice?.date === date && composerNotice.text === '記録しました') {
         composerNotice = null;
         const currentStatus = $('#draft-status');
-        if (currentStatus && state.date === date) currentStatus.textContent = '';
+        if (currentStatus && state.date === date && currentStatus.textContent === '記録しました') {
+          currentStatus.textContent = '';
+        }
       }
     }, 1200);
   } catch (error) {
