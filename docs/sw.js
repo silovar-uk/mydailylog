@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mydailylog-2e5a897f4277';
+const CACHE_NAME = 'mydailylog-random-draw-20260925-1';
 const BUILD_ASSETS = [
   "./assets/index-yTGn1MVe.js",
   "./assets/index-5HvDcigK.css"
@@ -9,6 +9,8 @@ const APP_SHELL = [
   './manifest.webmanifest',
   './icon.svg',
   './apple-touch-icon.png',
+  './random-draw.js',
+  './random-draw.css',
   ...BUILD_ASSETS,
 ];
 
