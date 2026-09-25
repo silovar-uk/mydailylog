@@ -300,6 +300,20 @@ function setRoute(route) {
   render();
 }
 
+window.addEventListener('mydailylog:open-day', (event) => {
+  const date = event.detail?.date;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+  state.date = date;
+  state.route = 'today';
+  state.editingId = null;
+  state.menuOpenId = null;
+  state.colorPopoverId = null;
+  state.themeMenuOpen = false;
+  state.bookmarkOpen = false;
+  if (location.hash !== '#/today') history.pushState(null, '', '#/today');
+  render();
+});
+
 /* ---------- today: the paper page ---------- */
 
 async function renderToday() {
@@ -979,6 +993,7 @@ const UPDATE_HISTORY = [
   {
     date: '2026/09/25',
     items: [
+      '過去のメモから偶然の一枚に再会できる「一枚引く」を追加。日単位で抽選し、直近5件は重複しにくいよう調整。',
       '17個の外部パッチをアプリ本体へ統合し、後からDOMを書き換えるMutationObserverを全廃。',
       'カードの枠を外し、日を一枚の紙として読む表示に変更。メモの色分けは余白の小さな点で表示。',
       'PCの入力欄を紙の末尾の「次の一行」に統合。スマホは下部の入力シートを継続。',
