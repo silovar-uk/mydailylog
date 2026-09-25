@@ -1,39 +1,14 @@
-const CACHE_NAME = 'mydailylog-57b1f317435e';
+const CACHE_NAME = 'mydailylog-2e5a897f4277';
 const BUILD_ASSETS = [
-  "./assets/index-rMF6N0h3.js",
-  "./assets/index-xakSd8cV.css"
+  "./assets/index-yTGn1MVe.js",
+  "./assets/index-5HvDcigK.css"
 ];
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon.svg',
-  './desktop-input.css',
-  './ui-cleanup.js',
-  './runtime-log-title.js',
-  './mobile-composer-flow.js',
-  './draft-sidepanel.css',
-  './memo-collapsed-hint.css',
-  './draft-sidepanel.js',
-  './inline-log-edit.css',
-  './inline-log-edit.js',
-  './memo-shortcuts.js',
-  './log-card-ux.css',
-  './log-card-ux.js',
-  './card-copy.js',
-  './day-copy.css',
-  './day-copy.js',
-  './day-tidy.css',
-  './day-tidy.js',
-  './ui-language-meter.css',
-  './ui-language-meter.js',
-  './day-title-format.js',
-  './memo-terminology.js',
-  './settings-storage-help.css',
-  './settings-storage-help.js',
-  './settings-update-history.css',
-  './settings-update-history.js',
-  './review-removal.js',
+  './apple-touch-icon.png',
   ...BUILD_ASSETS,
 ];
 

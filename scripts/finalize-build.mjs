@@ -31,7 +31,7 @@ indexHtml = indexHtml
   .filter((line) => !line.includes('./assets/'))
   .join('\n');
 
-const insertionPoint = '  <style>.carry-over{display:none !important}</style>';
+const insertionPoint = '  <!-- build-assets -->';
 if (!indexHtml.includes(insertionPoint)) {
   throw new Error('Production asset insertion point is missing from docs/index.html.');
 }
