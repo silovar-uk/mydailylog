@@ -171,8 +171,56 @@ let state = {
 };
 
 let dayTidyUndo = null;
-let draftSaveTimer = null;
 let sideMemoSaveTimer = null;
+
+let draftGeneration = 0;
+let draftRuntime = null;
+const draftSeenKeys = new Set();
+let composerNotice = null;
+
+function cancelDraftTimer(runtime = draftRuntime) {
+  if (!runtime?.timer) return;
+  clearTimeout(runtime.timer);
+  runtime.timer = null;
+}
+
+function flushActiveComposerDraft() {
+  const runtime = draftRuntime;
+  if (!runtime?.flush) return false;
+  if (runtime.phase === 'submitting' || runtime.phase === 'committed') return false;
+  return runtime.flush();
+}
+
+function invalidateDraftRuntime(phase = 'idle') {
+  if (draftRuntime) {
+    cancelDraftTimer(draftRuntime);
+    draftRuntime.phase = phase;
+  }
+  draftGeneration += 1;
+}
+
+function cleanGhostDraft(date, draft, entries) {
+  if (!draft?.updatedAt) return draft;
+  const draftTime = Date.parse(draft.updatedAt);
+  if (!Number.isFinite(draftTime)) return draft;
+
+  const title = String(draft.title || '').trim();
+  const text = String(draft.text || '').trim();
+  if (!title && !text) return draft;
+
+  const isGhost = entries.some((entry) => {
+    const created = Date.parse(entry.createdAt);
+    if (!Number.isFinite(created) || Math.abs(created - draftTime) > 5000) return false;
+    return String(entry.title || '').trim() === title
+      && String(entry.content || '').trim() === text;
+  });
+
+  if (!isGhost) return draft;
+  const key = `${DRAFT_PREFIX}${date}`;
+  ls.remove(key);
+  draftSeenKeys.delete(key);
+  return null;
+}
 
 function parseEntry(raw) {
   const content = raw.trim();
@@ -250,7 +298,8 @@ function bindSwipe(container, { onPrev, onNext }) {
 /* ---------- render shell ---------- */
 
 async function render() {
-  $$('.color-popover').forEach((node) => node.remove());
+  flushActiveComposerDraft();
+  $('.color-popover').forEach((node) => node.remove());
   const route = state.route;
   app().innerHTML = `
     <main class="shell">
@@ -326,7 +375,13 @@ async function renderToday() {
   const [dateYear, dateMonth, dateDay] = date.split('-').map(Number);
   const weekday = new Intl.DateTimeFormat('ja-JP', { weekday: 'short', timeZone: 'Asia/Tokyo' }).format(new Date(`${date}T12:00:00`));
   const moodFade = day.mood ? 78 - day.mood * 14 : 55;
-  const draft = ls.get(`${DRAFT_PREFIX}${date}`, null);
+  const draftKey = `${DRAFT_PREFIX}${date}`;
+  let draft = cleanGhostDraft(date, ls.get(draftKey, null), entries);
+  const isFirstRestore = Boolean(draft) && !draftSeenKeys.has(draftKey);
+  if (draft) draftSeenKeys.add(draftKey);
+  const initialDraftStatus = draft
+    ? (isFirstRestore ? '前回の下書きを復元' : '下書き保存済み')
+    : (composerNotice?.date === date ? composerNotice.text : '');
   const bookmarkTargets = await getBookmarkTargets(date);
 
   $('#view').innerHTML = `
@@ -371,7 +426,7 @@ async function renderToday() {
         </div>
         <div class="composer-meta">
           <span class="composer-hint">Ctrl / Cmd + Enterで記録</span>
-          <span class="draft-status" id="draft-status" aria-live="polite">${draft?.text || draft?.title ? '下書きを復元' : ''}</span>
+          <span class="draft-status" id="draft-status" role="status" aria-live="polite">${escapeHtml(initialDraftStatus)}</span>
         </div>
       </div>
     </section>`;
@@ -625,52 +680,151 @@ function bindComposer(date) {
   const title = $('#composer-title');
   const textarea = $('#composer');
   const status = $('#draft-status');
+  const send = $('#send');
   const draftKey = `${DRAFT_PREFIX}${date}`;
+  const generation = ++draftGeneration;
 
-  const saveDraft = () => {
-    if (!textarea.value.trim() && !title.value.trim()) { ls.remove(draftKey); status.textContent = ''; return; }
-    ls.set(draftKey, { title: title.value, text: textarea.value, updatedAt: iso() });
-    status.textContent = '下書き保存済み';
+  cancelDraftTimer();
+  const runtime = {
+    generation,
+    date,
+    draftKey,
+    phase: textarea.value.trim() || title.value.trim() ? 'draft-saved' : 'idle',
+    timer: null,
+    composer,
+    title,
+    textarea,
+    status,
+    send,
+    flush: null,
   };
+  draftRuntime = runtime;
+
+  const isCurrent = () => draftRuntime === runtime
+    && draftRuntime.generation === generation;
+
+  const setStatus = (text) => {
+    if (isCurrent() && status.isConnected) status.textContent = text;
+  };
+
+  const flushDraft = () => {
+    if (!isCurrent()) return false;
+    if (runtime.phase === 'submitting' || runtime.phase === 'committed') return false;
+
+    cancelDraftTimer(runtime);
+    const titleValue = title.value;
+    const textValue = textarea.value;
+
+    if (!textValue.trim() && !titleValue.trim()) {
+      ls.remove(draftKey);
+      draftSeenKeys.delete(draftKey);
+      runtime.phase = 'idle';
+      setStatus('');
+      return true;
+    }
+
+    ls.set(draftKey, { title: titleValue, text: textValue, updatedAt: iso() });
+    draftSeenKeys.add(draftKey);
+    runtime.phase = 'draft-saved';
+    setStatus('下書き保存済み');
+    return true;
+  };
+
+  runtime.flush = flushDraft;
+
   const scheduleDraft = () => {
-    status.textContent = '保存中…';
-    clearTimeout(draftSaveTimer);
-    draftSaveTimer = setTimeout(saveDraft, 180);
+    if (!isCurrent() || runtime.phase === 'submitting' || runtime.phase === 'committed') return;
+    runtime.phase = 'dirty';
+    setStatus('保存中…');
+    cancelDraftTimer(runtime);
+    runtime.timer = setTimeout(() => {
+      runtime.timer = null;
+      if (!isCurrent()) return;
+      flushDraft();
+    }, 180);
   };
 
-  const toggleActive = () => composer.classList.toggle('is-active', document.activeElement === textarea || Boolean(textarea.value.trim()));
+  const toggleActive = () => composer.classList.toggle(
+    'is-active',
+    document.activeElement === textarea || Boolean(textarea.value.trim()),
+  );
+
   textarea.addEventListener('focus', toggleActive);
-  textarea.addEventListener('blur', () => { toggleActive(); saveDraft(); });
+  textarea.addEventListener('blur', () => { toggleActive(); flushDraft(); });
   textarea.addEventListener('input', scheduleDraft);
   title.addEventListener('input', scheduleDraft);
-  title.addEventListener('blur', saveDraft);
+  title.addEventListener('blur', flushDraft);
   title.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && !event.isComposing) { event.preventDefault(); textarea.focus(); }
+    if (event.key === 'Enter' && !event.isComposing) {
+      event.preventDefault();
+      textarea.focus();
+    }
   });
 
-  $('#send').onclick = () => saveComposer(date);
+  send.onclick = () => saveComposer(date);
   textarea.addEventListener('keydown', (event) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') saveComposer(date);
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && !event.isComposing) {
+      event.preventDefault();
+      saveComposer(date);
+    }
   });
 }
 
 async function saveComposer(date) {
+  const runtime = draftRuntime;
   const textarea = $('#composer');
   const titleInput = $('#composer-title');
+  const send = $('#send');
+  if (!runtime || runtime.date !== date || runtime.phase === 'submitting') return;
+
   const raw = textarea.value.trim();
   if (!raw) return;
+
+  const title = titleInput.value.trim();
+  const draftKey = `${DRAFT_PREFIX}${date}`;
+  cancelDraftTimer(runtime);
+  runtime.phase = 'submitting';
+  runtime.status.textContent = '記録中…';
+  textarea.disabled = true;
+  titleInput.disabled = true;
+  send.disabled = true;
+
   const parsed = parseEntry(raw);
   const entry = {
-    id: uid(), date, time: parsed.time, title: titleInput.value.trim(), content: raw,
+    id: uid(), date, time: parsed.time, title, content: raw,
     type: 'memo', amount: null, unit: null, tags: [], importance: parsed.importance,
     pinned: false, pinnedAt: null, favorite: false, favoriteAt: null, cardColor: 'default',
     metadata: {}, createdAt: iso(), updatedAt: iso(), deletedAt: null,
   };
-  await db.put('entries', entry);
-  ls.remove(`${DRAFT_PREFIX}${date}`);
-  state.justAddedId = entry.id;
-  render();
-  setTimeout(() => { state.justAddedId = null; }, 900);
+
+  try {
+    await db.put('entries', entry);
+    ls.remove(draftKey);
+    draftSeenKeys.delete(draftKey);
+    runtime.phase = 'committed';
+    invalidateDraftRuntime('committed');
+    composerNotice = { date, text: '記録しました' };
+    state.justAddedId = entry.id;
+    await render();
+
+    setTimeout(() => {
+      state.justAddedId = null;
+      if (composerNotice?.date === date && composerNotice.text === '記録しました') {
+        composerNotice = null;
+        const currentStatus = $('#draft-status');
+        if (currentStatus && state.date === date) currentStatus.textContent = '';
+      }
+    }, 1200);
+  } catch (error) {
+    ls.set(draftKey, { title, text: raw, updatedAt: iso() });
+    draftSeenKeys.add(draftKey);
+    runtime.phase = 'error';
+    textarea.disabled = false;
+    titleInput.disabled = false;
+    send.disabled = false;
+    runtime.status.textContent = '記録できませんでした。下書きは残っています';
+    console.error('composer save failed', error);
+  }
 }
 
 async function softDelete(id) {
@@ -999,6 +1153,7 @@ const UPDATE_HISTORY = [
   {
     date: '2026/09/25',
     items: [
+      '正式保存後に下書きが復活する競合を修正。保存世代管理、離脱時flush、幽霊下書きの自動掃除を追加。',
       '記入欄を「今日に書く」として独立。薄い紙色、常時ラベル、フォーカス強調、「書」の朱印で書く場所を見つけやすくした。',
       '過去のメモから偶然の一枚に再会できる「一枚引く」を追加。日単位で抽選し、直近5件は重複しにくいよう調整。',
       '17個の外部パッチをアプリ本体へ統合し、後からDOMを書き換えるMutationObserverを全廃。',
@@ -1372,9 +1527,12 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowRight' && panel.classList.contains('is-open')) panel.__setOpen(false);
 });
 
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushActiveComposerDraft();
+});
+
 window.addEventListener('pagehide', () => {
-  const composer = $('#composer');
-  if (composer && composer.value.trim()) ls.set(`${DRAFT_PREFIX}${state.date}`, { title: $('#composer-title')?.value || '', text: composer.value, updatedAt: iso() });
+  flushActiveComposerDraft();
   const sideText = $('#side-memo-text');
   if (sideText) ls.set(SIDE_MEMO_KEY, { text: sideText.value, updatedAt: iso() });
 });
