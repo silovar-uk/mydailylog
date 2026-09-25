@@ -359,14 +359,20 @@ async function renderToday() {
       <div class="entries-paper">
         ${entries.length ? entries.map((entry, index) => memoArticle(entry, { first: index === 0 || (entries[index - 1].pinned && !entry.pinned) })).join('') : '<div class="empty">入力はこれから。ちょっとだけ書いてみよう。</div>'}
       </div>
-      <div class="composer" aria-label="次の一行">
+      <div class="composer" aria-label="今日に書く">
+        <div class="composer-head">
+          <span class="composer-label">今日に書く</span>
+          <span class="composer-write-seal" aria-hidden="true">書</span>
+        </div>
         <input id="composer-title" class="composer-title" type="text" autocomplete="off" placeholder="題名（なくてもOK）" value="${escapeHtml(draft?.title || '')}" aria-label="ログの題名 任意" />
         <div class="composer-row">
           <textarea id="composer" placeholder="今日のメモを書く…">${escapeHtml(draft?.text || '')}</textarea>
           <button type="button" class="send" id="send" aria-label="メモを追加">↑</button>
         </div>
-        <span class="draft-status" id="draft-status" aria-live="polite">${draft?.text || draft?.title ? '下書きを復元' : ''}</span>
-        <span class="composer-hint">Ctrl / Cmd + Enterで記録。複数行でも1つのメモとして保存。</span>
+        <div class="composer-meta">
+          <span class="composer-hint">Ctrl / Cmd + Enterで記録</span>
+          <span class="draft-status" id="draft-status" aria-live="polite">${draft?.text || draft?.title ? '下書きを復元' : ''}</span>
+        </div>
       </div>
     </section>`;
 
@@ -993,6 +999,7 @@ const UPDATE_HISTORY = [
   {
     date: '2026/09/25',
     items: [
+      '記入欄を「今日に書く」として独立。薄い紙色、常時ラベル、フォーカス強調、「書」の朱印で書く場所を見つけやすくした。',
       '過去のメモから偶然の一枚に再会できる「一枚引く」を追加。日単位で抽選し、直近5件は重複しにくいよう調整。',
       '17個の外部パッチをアプリ本体へ統合し、後からDOMを書き換えるMutationObserverを全廃。',
       'カードの枠を外し、日を一枚の紙として読む表示に変更。メモの色分けは余白の小さな点で表示。',
