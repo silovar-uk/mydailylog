@@ -139,15 +139,130 @@ h2 { margin: 0; font-size: 21px; font-weight: 500; line-height: 1.4; }
 
 .empty { border: 1px dashed var(--keisen); border-radius: var(--radius); padding: 46px 14px; color: var(--usuzumi); text-align: center; }
 
-/* --- composer: "next line" --- */
-.composer { display: grid; gap: 6px; margin-top: 10px; padding-top: 12px; border-top: 1px dashed var(--keisen); }
-.composer-title { width: 100%; border: 0; border-bottom: 1px solid var(--keisen); background: transparent; padding: 3px 1px 7px; font-family: 'Shippori Mincho', serif; font-size: 15px; }
-.composer-row { display: flex; align-items: flex-end; gap: 8px; }
-.composer textarea { flex: 1; min-height: 22px; max-height: 40vh; border: 0; border-bottom: 1px solid transparent; background: transparent; padding: 4px 1px; line-height: 1.75; transition: min-height .15s ease; }
-.composer.is-active textarea { min-height: 84px; border-bottom-color: var(--keisen); }
-.composer button.send { width: 34px; flex: 0 0 34px; min-height: 34px; color: var(--shu); font-size: 20px; }
-.composer-hint { color: var(--usuzumi); font-size: 10.5px; }
-.draft-status { color: var(--usuzumi); font-size: 10px; }
+/* --- composer: "today input sheet" --- */
+.entries-paper { transition: opacity .18s ease; }
+
+.composer {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  border: 1px solid color-mix(in srgb, var(--shu), var(--keisen) 76%);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface), var(--shu) 4%);
+  padding: 11px 12px 10px;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--surface), transparent 55%);
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.composer:focus-within {
+  border-color: color-mix(in srgb, var(--shu), var(--keisen) 18%);
+  background: color-mix(in srgb, var(--surface), var(--shu) 7%);
+  box-shadow: 0 7px 24px rgba(0, 0, 0, .08);
+}
+.paper:has(.composer:focus-within) .entries-paper { opacity: .86; }
+
+.composer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 22px;
+}
+.composer-label {
+  color: color-mix(in srgb, var(--ink), var(--shu) 32%);
+  font-family: 'Shippori Mincho', serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+.composer-write-seal {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--shu), transparent 45%);
+  border-radius: 4px;
+  color: color-mix(in srgb, var(--shu), transparent 12%);
+  font-family: 'Shippori Mincho', serif;
+  font-size: 12px;
+  line-height: 1;
+  transform: rotate(-6deg);
+  opacity: .72;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.composer:focus-within .composer-write-seal {
+  opacity: 1;
+  transform: rotate(-6deg) scale(1.05);
+}
+
+.composer-title {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--keisen), var(--shu) 10%);
+  background: transparent;
+  padding: 2px 1px 7px;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 15px;
+}
+.composer-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+}
+.composer textarea {
+  flex: 1;
+  min-height: 58px;
+  max-height: 40vh;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  padding: 5px 1px 7px;
+  line-height: 1.8;
+  transition: min-height .18s ease, border-color .18s ease;
+}
+.composer:focus-within textarea,
+.composer.is-active textarea {
+  min-height: 96px;
+  border-bottom-color: color-mix(in srgb, var(--keisen), var(--shu) 12%);
+}
+.composer button.send {
+  display: grid;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--shu), var(--keisen) 52%);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface), var(--shu) 5%);
+  color: var(--shu);
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+}
+.composer:focus-within button.send,
+.composer:has(textarea:not(:placeholder-shown)) button.send {
+  border-color: var(--shu);
+  background: var(--shu);
+  color: #fff;
+}
+.composer button.send:active { transform: translateY(1px); }
+
+.composer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 16px;
+}
+.composer-hint,
+.draft-status {
+  color: var(--usuzumi);
+  font-size: 10px;
+}
+.draft-status {
+  margin-left: auto;
+  text-align: right;
+}
 
 /* --- side memo drawer --- */
 .side-memo-toggle-inline { display: none; }
@@ -230,7 +345,14 @@ h2 { margin: 0; font-size: 21px; font-weight: 500; line-height: 1.4; }
   .nav-icon { display: inline-block; margin: 0 6px 0 0; vertical-align: -4px; }
 }
 @media (max-width: 799px) {
-  .composer { position: fixed; z-index: 5; bottom: 60px; left: 50%; width: min(760px, calc(100% - 20px)); transform: translateX(-50%); border: 1px solid var(--keisen); border-top: 1px solid var(--keisen); border-radius: 12px; background: var(--surface); padding: 8px 10px; box-shadow: 0 8px 28px rgba(0, 0, 0, .14); margin-top: 0; }
+  .composer { position: fixed; z-index: 5; bottom: 60px; left: 50%; width: min(760px, calc(100% - 20px)); transform: translateX(-50%); margin-top: 0; padding: 9px 10px 8px; box-shadow: 0 9px 30px rgba(0, 0, 0, .16); }
+  .composer textarea { min-height: 44px; }
+  .composer:focus-within textarea, .composer.is-active textarea { min-height: 78px; }
+  .composer-head { min-height: 18px; }
+  .composer-label { font-size: 12px; }
+  .composer-write-seal { width: 21px; height: 21px; font-size: 11px; }
+  .composer-meta { min-height: 14px; }
+  .composer-hint { display: none; }
   .shell { padding-bottom: 150px; }
   .mobile-memo-toggle { display: inline-flex; align-items: center; gap: 3px; min-height: 30px; margin: 0 0 6px; border: 1px solid var(--keisen); border-radius: 999px; padding: 0 10px; color: var(--usuzumi); font-size: 12px; float: right; }
   .side-memo-toggle { display: none; }
