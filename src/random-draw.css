@@ -1,0 +1,258 @@
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.random-draw-trigger {
+  min-height: 36px;
+  border: 1px solid color-mix(in srgb, var(--keisen), transparent 5%);
+  border-radius: 999px;
+  padding: 0 12px;
+  color: var(--usuzumi);
+  font-size: 12px;
+  white-space: nowrap;
+  transition: border-color .15s ease, color .15s ease, background .15s ease, transform .15s ease;
+}
+
+.random-draw-trigger:hover,
+.random-draw-trigger:focus-visible {
+  border-color: color-mix(in srgb, var(--shu), var(--keisen) 55%);
+  background: color-mix(in srgb, var(--surface), transparent 25%);
+  color: var(--shu);
+}
+
+.random-draw-trigger:active {
+  transform: translateY(1px);
+}
+
+body.random-draw-open {
+  overflow: hidden;
+}
+
+#random-draw-root[hidden] {
+  display: none;
+}
+
+.random-draw-backdrop {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(24, 21, 17, .36);
+  padding: 20px;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+
+#random-draw-root.is-open .random-draw-backdrop {
+  opacity: 1;
+}
+
+.random-draw-sheet {
+  position: relative;
+  width: min(520px, calc(100vw - 32px));
+  max-height: min(78vh, 720px);
+  overflow: auto;
+  border: 1px solid var(--keisen);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 24px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .24);
+  transform: translateY(8px) scale(.985);
+  transition: transform .18s ease;
+}
+
+#random-draw-root.is-open .random-draw-sheet {
+  transform: translateY(0) scale(1);
+}
+
+.random-draw-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  color: var(--usuzumi);
+  font-size: 22px;
+}
+
+.random-draw-kicker {
+  margin: 0 42px 12px 0;
+  color: var(--usuzumi);
+  font: 600 10px/1.4 'IBM Plex Mono', monospace;
+  letter-spacing: .12em;
+}
+
+.random-draw-paper {
+  position: relative;
+  min-height: 220px;
+  border-top: 1px solid var(--keisen);
+  border-bottom: 1px solid var(--keisen);
+  padding: 22px 10px 24px;
+}
+
+.random-draw-paper.is-drawn {
+  animation: random-paper-in .32s cubic-bezier(.2, .8, .2, 1);
+}
+
+.random-draw-stamp {
+  position: absolute;
+  top: 17px;
+  right: 8px;
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--shu), transparent 22%);
+  border-radius: 4px;
+  color: var(--shu);
+  font-family: 'Shippori Mincho', serif;
+  font-size: 15px;
+  transform: rotate(-7deg);
+}
+
+.random-draw-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px 12px;
+  margin-right: 42px;
+  color: var(--usuzumi);
+}
+
+.random-draw-date {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 14px;
+}
+
+.random-draw-distance {
+  font: 11px/1.4 'IBM Plex Mono', monospace;
+}
+
+.random-draw-favorite {
+  margin-top: 10px;
+  color: var(--shu);
+  font-size: 11px;
+}
+
+.random-draw-title {
+  margin: 18px 0 8px;
+  color: color-mix(in srgb, var(--shu) 55%, var(--ink) 45%);
+  font-family: 'Shippori Mincho', serif;
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.random-draw-title[hidden] {
+  display: none;
+}
+
+.random-draw-content {
+  margin: 16px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.random-draw-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.random-draw-actions button {
+  min-height: 38px;
+  border: 1px solid var(--keisen);
+  border-radius: 999px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+
+.random-draw-actions .random-draw-open-day {
+  color: var(--usuzumi);
+}
+
+.random-draw-actions .random-draw-again {
+  border-color: color-mix(in srgb, var(--shu), var(--keisen) 45%);
+  color: var(--shu);
+  font-weight: 700;
+}
+
+.random-draw-actions button:hover,
+.random-draw-actions button:focus-visible {
+  background: color-mix(in srgb, var(--keisen), transparent 45%);
+}
+
+@keyframes random-paper-in {
+  from {
+    opacity: .25;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .random-draw-trigger {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 11.5px;
+  }
+
+  .random-draw-backdrop {
+    align-items: end;
+    padding: 0;
+  }
+
+  .random-draw-sheet {
+    width: 100%;
+    max-height: min(82vh, 760px);
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 18px 18px 0 0;
+    padding: 22px 18px calc(18px + env(safe-area-inset-bottom));
+    transform: translateY(24px);
+  }
+
+  #random-draw-root.is-open .random-draw-sheet {
+    transform: translateY(0);
+  }
+
+  .random-draw-paper {
+    min-height: 200px;
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+
+  .random-draw-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .random-draw-actions button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .random-draw-backdrop,
+  .random-draw-sheet,
+  .random-draw-trigger {
+    transition: none !important;
+  }
+
+  .random-draw-paper.is-drawn {
+    animation: none !important;
+  }
+}
