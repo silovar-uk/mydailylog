@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mydailylog-random-draw-20260925-1';
+const CACHE_NAME = 'mydailylog-composer-focus-20260925-1';
 const BUILD_ASSETS = [
   "./assets/index-yTGn1MVe.js",
   "./assets/index-5HvDcigK.css"
